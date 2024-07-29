@@ -14,16 +14,26 @@ function love.load()
 
     -- Load texture data
     TEXTURES = { -- {texture,size}
-        { img = love.graphics.newImage("/textures/wall_brick_01.jpg"),   size = 128 },
-        { img = love.graphics.newImage("/textures/wall_brick_02.jpg"),   size = 128 },
-        { img = love.graphics.newImage("/textures/wall_brick_03.jpg"),   size = 128 },
-        { img = love.graphics.newImage("/textures/wall_magic_01.jpg"),   size = 128 },
-        { img = love.graphics.newImage("/textures/wall_metal_01.jpg"),   size = 128 },
-        { img = love.graphics.newImage("/textures/wall_painted_01.jpg"), size = 128 },
-        { img = love.graphics.newImage("/textures/wall_painted_02.jpg"), size = 128 },
-        { img = love.graphics.newImage("/textures/wall_painted_03.jpg"), size = 128 },
-        { img = love.graphics.newImage("/textures/wall_painted_04.jpg"), size = 128 },
-        { img = love.graphics.newImage("/textures/wall_painted_05.jpg"), size = 128 },
+        { img = love.graphics.newImage("/textures/wall_brick_01.jpg"),     size = 128 },
+        { img = love.graphics.newImage("/textures/wall_brick_02.jpg"),     size = 128 },
+        { img = love.graphics.newImage("/textures/wall_brick_03.jpg"),     size = 128 },
+        { img = love.graphics.newImage("/textures/wall_magic_01.jpg"),     size = 128 },
+        { img = love.graphics.newImage("/textures/wall_metal_01.jpg"),     size = 128 },
+        { img = love.graphics.newImage("/textures/wall_painted_01.jpg"),   size = 128 },
+        { img = love.graphics.newImage("/textures/wall_painted_02.jpg"),   size = 128 },
+        { img = love.graphics.newImage("/textures/wall_painted_03.jpg"),   size = 128 },
+        { img = love.graphics.newImage("/textures/wall_painted_04.jpg"),   size = 128 },
+        { img = love.graphics.newImage("/textures/wall_painted_05.jpg"),   size = 128 },
+        { img = love.graphics.newImage("/textures/floor_brick_01.jpg"),    size = 128 },
+        { img = love.graphics.newImage("/textures/floor_concrete_01.jpg"), size = 128 },
+        { img = love.graphics.newImage("/textures/floor_concrete_02.jpg"), size = 128 },
+        { img = love.graphics.newImage("/textures/floor_concrete_03.jpg"), size = 128 },
+        { img = love.graphics.newImage("/textures/floor_grass_01.jpg"),    size = 128 },
+        { img = love.graphics.newImage("/textures/floor_metal_01.jpg"),    size = 128 },
+        { img = love.graphics.newImage("/textures/floor_metal_02.jpg"),    size = 128 },
+        { img = love.graphics.newImage("/textures/floor_tile_01.jpg"),     size = 128 },
+        { img = love.graphics.newImage("/textures/floor_tile_02.jpg"),     size = 128 },
+        { img = love.graphics.newImage("/textures/floor_wood_01.jpg"),     size = 128 },
     }
     for _, texture in ipairs(TEXTURES) do
         texture.img:setFilter("nearest", "nearest", 8)
@@ -56,7 +66,7 @@ function love.draw()
     -- Make sure everything is scaled to current resolution
     love.graphics.scale(SCALE.x, SCALE.y)
 
-    MAP:draw_fp(PLAYER)
+    MAP:draw_walls(PLAYER)
 
     love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 10)
 end

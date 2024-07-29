@@ -29,6 +29,8 @@ MAP = {
         local pos_y = player.y - SCREEN_HEIGHT / 2
 
         local pos_z = 0.5 * SCREEN_HEIGHT
+
+        local 
     end,
     draw_walls = function(self, player)
         for x = 0, SCREEN_WIDTH - 1, 2 do

@@ -21,19 +21,54 @@ MAP = {
         { { 2, 0, 0 },  { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 },  { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 } }
     },
     draw_floors = function(self, player)
-        local ray_dir_x0 = player.dir_x - player.plane_y
-        local ray_dir_y0 = player.dir_y - player.plane_y
-        local ray_dir_x1 = player.dir_x + player.plane_y
-        local ray_dir_y1 = player.dir_y + player.plane_y
+        -- Looping vertically instead of horizontally for the floor and ceiling
+        local floor_texture = TEXTURES[18]
+        local ceiling_texture = TEXTURES[12]
 
-        local pos_y = player.y - SCREEN_HEIGHT / 2
+        for y = 0, SCREEN_HEIGHT, 1 do
+            local ray_dir_x0 = player.dir_x - player.plane_y
+            local ray_dir_y0 = player.dir_y - player.plane_y
+            local ray_dir_x1 = player.dir_x + player.plane_y
+            local ray_dir_y1 = player.dir_y + player.plane_y
 
-        local pos_z = 0.5 * SCREEN_HEIGHT
+            local pos_y = player.y - SCREEN_HEIGHT / 2
 
-        local 
+            local pos_z = 0.5 * SCREEN_HEIGHT
+
+            -- Horizontal distance from camera to the floor
+            -- Z pos is the middle between floor and ceiling
+            local row_dist = pos_z / pos_y
+
+            local floor_step_x = row_dist * (ray_dir_x1 - ray_dir_x0) / SCREEN_WIDTH
+            local floor_step_y = row_dist * (ray_dir_y1 - ray_dir_y0) / SCREEN_WIDTH
+
+            local floor_x = player.x + row_dist * ray_dir_x0
+            local floor_y = player.y + row_dist * ray_dir_y0
+
+            for x = 0, SCREEN_WIDTH - 1 do
+                local cell_X = math.floor(floor_x)
+                local cell_y = math.floor(floor_y)
+
+                local tx = math.floor(floor_texture.size * (floor_x - cell_X)) % floor_texture.size
+                local ty = math.floor(floor_texture.size * (floor_y - cell_y)) % floor_texture.size
+
+                floor_x = floor_x + floor_step_x
+                floor_y = floor_y + floor_step_y
+
+                -- Draw floor
+                local floor_quad = love.graphics.newQuad(tx, ty, 1, 1, floor_texture.size, floor_texture.size)
+                love.graphics.setColor(1, 1, 1) -- Set color to white
+                love.graphics.draw(floor_texture.img, floor_quad, x, y)
+
+                -- Draw ceiling (symmetrical)
+                local ceiling_quad = love.graphics.newQuad(tx, ty, 1, 1, ceiling_texture.size, ceiling_texture.size)
+                love.graphics.setColor(1, 1, 1) -- Set color to white
+                love.graphics.draw(ceiling_texture.img, ceiling_quad, x, SCREEN_HEIGHT - y - 1)
+            end
+        end
     end,
     draw_walls = function(self, player)
-        for x = 0, SCREEN_WIDTH - 1, 2 do
+        for x = 0, SCREEN_WIDTH, 2 do
             local cam_x = 2 * x / SCREEN_WIDTH - 1
             local ray_dir_x = player.dir_x + player.plane_x * cam_x
             local ray_dir_y = player.dir_y + player.plane_y * cam_x

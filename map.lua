@@ -2,71 +2,42 @@ MAP = {
     width = 16,
     height = 16,
     wall_height = 400,
-    walls = { -- {wall, floor, ceiling}
-        { { 2, 0, 0 },  { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 },  { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 } },
-        { { 2, 0, 0 },  { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 2, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 },  { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 2, 0, 0 } },
-        { { 2, 0, 0 },  { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 },  { 2, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 2, 0, 0 } },
-        { { 2, 0, 0 },  { 0, 0, 0 }, { 5, 0, 0 }, { 5, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 2, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 },  { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 } },
-        { { 1, 0, 0 },  { 0, 0, 0 }, { 5, 0, 0 }, { 5, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 2, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 },  { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 0, 0 } },
-        { { 6, 0, 0 },  { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 2, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 },  { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 2, 0, 0 } },
-        { { 7, 0, 0 },  { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 },  { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 3, 0, 0 } },
-        { { 8, 0, 0 },  { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 },  { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 4, 0, 0 } },
-        { { 9, 0, 0 },  { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 },  { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 5, 0, 0 } },
-        { { 10, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 },  { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 6, 0, 0 } },
-        { { 11, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 2, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 },  { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 7, 0, 0 } },
-        { { 1, 0, 0 },  { 0, 0, 0 }, { 4, 0, 0 }, { 4, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 2, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 10, 0, 0 }, { 3, 0, 0 }, { 4, 0, 0 }, { 0, 0, 0 }, { 1, 0, 0 } },
-        { { 2, 0, 0 },  { 0, 0, 0 }, { 4, 0, 0 }, { 4, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 2, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 9, 0, 0 },  { 0, 0, 0 }, { 5, 0, 0 }, { 0, 0, 0 }, { 2, 0, 0 } },
-        { { 2, 0, 0 },  { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 8, 0, 0 },  { 7, 0, 0 }, { 6, 0, 0 }, { 0, 0, 0 }, { 2, 0, 0 } },
-        { { 2, 0, 0 },  { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 2, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 },  { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 2, 0, 0 } },
-        { { 2, 0, 0 },  { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 },  { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 }, { 2, 0, 0 } }
+    walls = {
+        { 2,  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 },
+        { 2,  0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2 },
+        { 2,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 2 },
+        { 2,  0, 0, 5, 5, 0, 0, 2, 0, 0, 0, 0, 2, 2, 2, 2 },
+        { 1,  0, 0, 5, 5, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 6,  0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2 },
+        { 7,  0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 3 },
+        { 8,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4 },
+        { 9,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 },
+        { 10, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 6 },
+        { 11, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 7 },
+        { 1,  0, 0, 4, 4, 0, 0, 2, 0, 0, 0, 2, 2, 3, 0, 1 },
+        { 2,  0, 0, 4, 4, 0, 0, 2, 0, 0, 0, 8, 0, 4, 0, 2 },
+        { 2,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 6, 5, 0, 2 },
+        { 2,  0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2 },
+        { 2,  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }
     },
-    draw_floors = function(self, player)
-        -- Looping vertically instead of horizontally for the floor and ceiling
-        local floor_texture = TEXTURES[18]
-        local ceiling_texture = TEXTURES[12]
-
-        for y = 0, SCREEN_HEIGHT, 1 do
-            local ray_dir_x0 = player.dir_x - player.plane_y
-            local ray_dir_y0 = player.dir_y - player.plane_y
-            local ray_dir_x1 = player.dir_x + player.plane_y
-            local ray_dir_y1 = player.dir_y + player.plane_y
-
-            local pos_y = player.y - SCREEN_HEIGHT / 2
-
-            local pos_z = 0.5 * SCREEN_HEIGHT
-
-            -- Horizontal distance from camera to the floor
-            -- Z pos is the middle between floor and ceiling
-            local row_dist = pos_z / pos_y
-
-            local floor_step_x = row_dist * (ray_dir_x1 - ray_dir_x0) / SCREEN_WIDTH
-            local floor_step_y = row_dist * (ray_dir_y1 - ray_dir_y0) / SCREEN_WIDTH
-
-            local floor_x = player.x + row_dist * ray_dir_x0
-            local floor_y = player.y + row_dist * ray_dir_y0
-
-            for x = 0, SCREEN_WIDTH - 1 do
-                local cell_X = math.floor(floor_x)
-                local cell_y = math.floor(floor_y)
-
-                local tx = math.floor(floor_texture.size * (floor_x - cell_X)) % floor_texture.size
-                local ty = math.floor(floor_texture.size * (floor_y - cell_y)) % floor_texture.size
-
-                floor_x = floor_x + floor_step_x
-                floor_y = floor_y + floor_step_y
-
-                -- Draw floor
-                local floor_quad = love.graphics.newQuad(tx, ty, 1, 1, floor_texture.size, floor_texture.size)
-                love.graphics.setColor(1, 1, 1) -- Set color to white
-                love.graphics.draw(floor_texture.img, floor_quad, x, y)
-
-                -- Draw ceiling (symmetrical)
-                local ceiling_quad = love.graphics.newQuad(tx, ty, 1, 1, ceiling_texture.size, ceiling_texture.size)
-                love.graphics.setColor(1, 1, 1) -- Set color to white
-                love.graphics.draw(ceiling_texture.img, ceiling_quad, x, SCREEN_HEIGHT - y - 1)
-            end
-        end
-    end,
+    floors = {
+        { 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12 },
+        { 12, 1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 12 },
+        { 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12 },
+        { 12, 1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 12 },
+        { 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12 },
+        { 12, 1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 12 },
+        { 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12 },
+        { 12, 1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 12 },
+        { 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12 },
+        { 12, 1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 12 },
+        { 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12 },
+        { 12, 1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 12 },
+        { 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12 },
+        { 12, 1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 12 },
+        { 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12 },
+        { 12, 1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 12 },
+    },
     draw_walls = function(self, player)
         for x = 0, SCREEN_WIDTH, 2 do
             local cam_x = 2 * x / SCREEN_WIDTH - 1
@@ -86,7 +57,7 @@ MAP = {
 
             local side
 
-            local dof, max_dof = 0, 16
+            local view_dist, max_view_dist = 0, 16
 
             if ray_dir_x < 0 then
                 step_x = -1
@@ -103,23 +74,23 @@ MAP = {
                 side_dist_y = (map_y + 1.0 - player.y) * delta_dist_y
             end
 
-            while dof < max_dof do
+            while view_dist < max_view_dist do
                 if side_dist_x < side_dist_y then
                     side_dist_x = side_dist_x + delta_dist_x
                     map_x = map_x + step_x
                     side = 0
-                    dof = dof + 1
+                    view_dist = view_dist + 1
                 else
                     side_dist_y = side_dist_y + delta_dist_y
                     map_y = map_y + step_y
                     side = 1
-                    dof = dof + 1
+                    view_dist = view_dist + 1
                 end
 
                 if map_x < 0 or map_x >= self.width
                     or map_y < 0 or map_y >= self.height
-                    or self.walls[map_y][map_x][1] > 0 then
-                    dof = max_dof
+                    or self.walls[map_y][map_x] > 0 then
+                    view_dist = max_view_dist
                 end
             end
 
@@ -130,14 +101,10 @@ MAP = {
             end
 
             local line_height = math.floor(SCREEN_HEIGHT / perp_wall_dist)
-
             local draw_start = -line_height / 2 + SCREEN_HEIGHT / 2
-            draw_start = math.max(0, draw_start)
-
             local draw_end = line_height / 2 + SCREEN_HEIGHT / 2
-            draw_end = math.min(SCREEN_HEIGHT - 1, draw_end)
 
-            if self.walls[map_y][map_x][1] > 1 then
+            if self.walls[map_y][map_x] > 1 then
                 -- For drawing colours --
                 -- local colours = {
                 --     { 1,    0,   0 },
@@ -150,17 +117,21 @@ MAP = {
                 --     { 1,    1,   1 }
                 -- }
 
-                -- local wall_col = colours[self.walls[map_y][map_x][1] - 1]
+                -- local wall_col = colours[self.walls[map_y][map_x] - 1]
 
                 -- for i = 1, #wall_col do
-                --     wall_col[i] = wall_col[i] - perp_wall_dist / max_dof
+                --     wall_col[i] = wall_col[i] - perp_wall_dist / max_view_dist
                 -- end
 
                 -- love.graphics.setColor(wall_col)
                 -- love.graphics.line(x, draw_start, x, draw_end)
 
-                -- Drawing textures pixel by pixel --
-                local wall_texture = TEXTURES[self.walls[map_y][map_x][1] - 1]
+                -- Drawing textures using quads --
+                local wall_texture = TEXTURES[self.walls[map_y][map_x] - 1]
+
+                local shading = 1 - (perp_wall_dist / (max_view_dist / 1.5))
+                local scaling = (draw_end - draw_start) / wall_texture.size
+
                 local wall_x
                 if side == 0 then
                     wall_x = player.y + perp_wall_dist * ray_dir_y
@@ -179,11 +150,8 @@ MAP = {
 
                 local quad = love.graphics.newQuad(tex_x, 0, 2, wall_texture.size, wall_texture.size, wall_texture.size)
 
-                local shading = 1 - (perp_wall_dist / (max_dof / 1.5))
-
                 love.graphics.setColor(shading, shading, shading)
-                love.graphics.draw(wall_texture.img, quad, x, draw_start, 0, 1,
-                    (draw_end - draw_start) / wall_texture.size)
+                love.graphics.draw(wall_texture.img, quad, x, draw_start, 0, 1, scaling)
             end
         end
     end

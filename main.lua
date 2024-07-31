@@ -66,7 +66,6 @@ function love.draw()
     -- Make sure everything is scaled to current resolution
     love.graphics.scale(SCALE.x, SCALE.y)
 
-    MAP:draw_floors(PLAYER)
     MAP:draw_walls(PLAYER)
 
     love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 10)

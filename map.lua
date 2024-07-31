@@ -39,6 +39,18 @@ MAP = {
         { 12, 1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 12 },
     },
     draw_walls = function(self, player)
+        for y = 0, SCREEN_HEIGHT do
+            if y < SCREEN_HEIGHT / 2 then
+                local r =
+                    love.graphics.setColor(0.5 - (y / 500), 0.25 - (y / 500), 0.5 - (y / 500))
+                love.graphics.line(0, y, SCREEN_WIDTH, y)
+            end
+            if y >= SCREEN_HEIGHT / 2 then
+                love.graphics.setColor(0, 0 + (y / 750) * 0.25, 0 + (y / 750) * 0.25)
+                love.graphics.line(0, y, SCREEN_WIDTH, y)
+            end
+        end
+
         for x = 0, SCREEN_WIDTH, 2 do
             local cam_x = 2 * x / SCREEN_WIDTH - 1
             local ray_dir_x = player.dir_x + player.plane_x * cam_x

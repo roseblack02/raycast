@@ -13,31 +13,34 @@ function love.load()
     SCALE = { x = 1, y = 1 }
 
     -- Load texture data
-    TEXTURES = { -- {texture,size}
-        { img = love.graphics.newImage("/textures/wall_brick_01.jpg"),     size = 128 },
-        { img = love.graphics.newImage("/textures/wall_brick_02.jpg"),     size = 128 },
-        { img = love.graphics.newImage("/textures/wall_brick_03.jpg"),     size = 128 },
-        { img = love.graphics.newImage("/textures/wall_magic_01.jpg"),     size = 128 },
-        { img = love.graphics.newImage("/textures/wall_metal_01.jpg"),     size = 128 },
-        { img = love.graphics.newImage("/textures/wall_painted_01.jpg"),   size = 128 },
-        { img = love.graphics.newImage("/textures/wall_painted_02.jpg"),   size = 128 },
-        { img = love.graphics.newImage("/textures/wall_painted_03.jpg"),   size = 128 },
-        { img = love.graphics.newImage("/textures/wall_painted_04.jpg"),   size = 128 },
-        { img = love.graphics.newImage("/textures/wall_painted_05.jpg"),   size = 128 },
-        { img = love.graphics.newImage("/textures/floor_brick_01.jpg"),    size = 128 },
-        { img = love.graphics.newImage("/textures/floor_concrete_01.jpg"), size = 128 },
-        { img = love.graphics.newImage("/textures/floor_concrete_02.jpg"), size = 128 },
-        { img = love.graphics.newImage("/textures/floor_concrete_03.jpg"), size = 128 },
-        { img = love.graphics.newImage("/textures/floor_grass_01.jpg"),    size = 128 },
-        { img = love.graphics.newImage("/textures/floor_metal_01.jpg"),    size = 128 },
-        { img = love.graphics.newImage("/textures/floor_metal_02.jpg"),    size = 128 },
-        { img = love.graphics.newImage("/textures/floor_tile_01.jpg"),     size = 128 },
-        { img = love.graphics.newImage("/textures/floor_tile_02.jpg"),     size = 128 },
-        { img = love.graphics.newImage("/textures/floor_wood_01.jpg"),     size = 128 },
+    WALL_TEXTURES = { -- {texture,size}
+        { img = love.graphics.newImage("/textures/wall_brick_01.jpg"),   size = 128 },
+        { img = love.graphics.newImage("/textures/wall_brick_02.jpg"),   size = 128 },
+        { img = love.graphics.newImage("/textures/wall_brick_03.jpg"),   size = 128 },
+        { img = love.graphics.newImage("/textures/wall_magic_01.jpg"),   size = 128 },
+        { img = love.graphics.newImage("/textures/wall_metal_01.jpg"),   size = 128 },
+        { img = love.graphics.newImage("/textures/wall_painted_01.jpg"), size = 128 },
+        { img = love.graphics.newImage("/textures/wall_painted_02.jpg"), size = 128 },
+        { img = love.graphics.newImage("/textures/wall_painted_03.jpg"), size = 128 },
+        { img = love.graphics.newImage("/textures/wall_painted_04.jpg"), size = 128 },
+        { img = love.graphics.newImage("/textures/wall_painted_05.jpg"), size = 128 },
     }
-    for _, texture in ipairs(TEXTURES) do
+    for _, texture in ipairs(WALL_TEXTURES) do
         texture.img:setFilter("nearest", "nearest", 8)
     end
+    FLOOR_TEXTURE = {
+        { img = love.image.newImageData("/textures/floor_brick_01.jpg"),    size = 128 },
+        { img = love.image.newImageData("/textures/floor_concrete_01.jpg"), size = 128 },
+        { img = love.image.newImageData("/textures/floor_concrete_02.jpg"), size = 128 },
+        { img = love.image.newImageData("/textures/floor_concrete_03.jpg"), size = 128 },
+        { img = love.image.newImageData("/textures/floor_grass_01.jpg"),    size = 128 },
+        { img = love.image.newImageData("/textures/floor_metal_01.jpg"),    size = 128 },
+        { img = love.image.newImageData("/textures/floor_metal_02.jpg"),    size = 128 },
+        { img = love.image.newImageData("/textures/floor_tile_01.jpg"),     size = 128 },
+        { img = love.image.newImageData("/textures/floor_tile_02.jpg"),     size = 128 },
+        { img = love.image.newImageData("/textures/floor_wood_01.jpg"),     size = 128 },
+    }
+
 
     -- For limiting fps
     SLEEP = 0

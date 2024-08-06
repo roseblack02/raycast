@@ -20,52 +20,58 @@ MAP = {
         { 2,  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }
     },
     draw_walls = function(self, player)
-        -- local floor_texture = FLOOR_TEXTURE[1]
-        -- local ceiling_texture = FLOOR_TEXTURE[2]
-        -- for y = 0, SCREEN_HEIGHT do
-        --     local ray_dir_x0 = player.dir_x - player.plane_x
-        --     local ray_dir_y0 = player.dir_y - player.plane_y
-        --     local ray_dir_x1 = player.dir_x + player.plane_x
-        --     local ray_dir_y1 = player.dir_y + player.plane_y
+        --TODO try doing walls pixel by pixel and adding them to a buffer
+        --then do ceiling and floors pixel by pixel added to the buffer
+        --then call points function on the buffer
+        --group all points with the same colour and draw them together
 
-        --     local p = y - SCREEN_HEIGHT / 2
-        --     if p == 0 then p = 1 end -- Avoid division by zero
+        local floor_texture = FLOOR_TEXTURE[1]
+        local ceiling_texture = FLOOR_TEXTURE[2]
 
-        --     local pos_z = 0.5 * SCREEN_HEIGHT
+        -- Precompute the texture size for easy access
+        local floor_tex_size = floor_texture.size
+        local ceiling_tex_size = ceiling_texture.size
 
-        --     local row_distance = pos_z / p
+        local starting_point = SCREEN_HEIGHT / 2
 
-        --     local floor_step_x = row_distance * (ray_dir_x1 - ray_dir_x0) / SCREEN_WIDTH
-        --     local floor_step_y = row_distance * (ray_dir_y1 - ray_dir_y0) / SCREEN_WIDTH
+        -- Drawing the floor and ceiling
+        for y = starting_point, SCREEN_HEIGHT do
+            local p = y - SCREEN_HEIGHT / 2
+            local pos_z = 0.5 * SCREEN_HEIGHT
+            local row_distance = pos_z / (p ~= 0 and p or 1) -- Avoid division by zero
 
-        --     local floor_x = player.x + row_distance * ray_dir_x0
-        --     local floor_y = player.y + row_distance * ray_dir_y0
+            local floor_step_x = row_distance * (player.dir_x + player.plane_x -
+                (player.dir_x - player.plane_x)) / SCREEN_WIDTH
+            local floor_step_y = row_distance * (player.dir_y + player.plane_y -
+                (player.dir_y - player.plane_y)) / SCREEN_WIDTH
+            local floor_x = player.x + row_distance * (player.dir_x - player.plane_x)
+            local floor_y = player.y + row_distance * (player.dir_y - player.plane_y)
 
-        --     for x = 0, SCREEN_WIDTH - 1 do
-        --         local cell_x = math.floor(floor_x)
-        --         local cell_y = math.floor(floor_y)
+            for x = 0, SCREEN_WIDTH - 1 do
+                local cell_x = math.floor(floor_x)
+                local cell_y = math.floor(floor_y)
 
-        --         local tx = math.floor(floor_texture.size * (floor_x - cell_x)) % floor_texture.size
-        --         local ty = math.floor(floor_texture.size * (floor_y - cell_y)) % floor_texture.size
+                local tx = math.floor(floor_tex_size * (floor_x - cell_x)) % floor_tex_size
+                local ty = math.floor(floor_tex_size * (floor_y - cell_y)) % floor_tex_size
 
-        --         -- Ensure tx and ty are within the valid range
-        --         tx = math.max(0, math.min(tx, floor_texture.size - 1))
-        --         ty = math.max(0, math.min(ty, floor_texture.size - 1))
+                -- Ensure tx and ty are within valid range
+                tx = math.max(0, math.min(tx, floor_tex_size - 1))
+                ty = math.max(0, math.min(ty, floor_tex_size - 1))
 
-        --         floor_x = floor_x + floor_step_x
-        --         floor_y = floor_y + floor_step_y
+                -- Draw floor
+                local r, g, b = floor_texture.img:getPixel(tx, ty)
+                love.graphics.setColor(r, g, b)
+                love.graphics.points(x, y)
 
-        --         -- floor
-        --         local r, g, b = floor_texture.img:getPixel(tx, ty)
-        --         love.graphics.setColor(r, g, b)
-        --         love.graphics.points(x, y)
+                -- Draw ceiling
+                r, g, b = ceiling_texture.img:getPixel(tx, ty)
+                love.graphics.setColor(r, g, b)
+                love.graphics.points(x, SCREEN_HEIGHT - y)
 
-        --         -- ceiling (symmetrical, at screen_height - y - 1 instead of y)
-        --         r, g, b = ceiling_texture.img:getPixel(tx, ty)
-        --         love.graphics.setColor(r, g, b)
-        --         love.graphics.points(x, SCREEN_HEIGHT - y - 1)
-        --     end
-        -- end
+                floor_x = floor_x + floor_step_x
+                floor_y = floor_y + floor_step_y
+            end
+        end
 
         for x = 0, SCREEN_WIDTH, 2 do
             local cam_x = 2 * x / SCREEN_WIDTH - 1

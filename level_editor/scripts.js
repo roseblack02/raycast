@@ -1,3 +1,17 @@
+const colours = [
+    "#FFFFFF",
+    "#808080",
+    "#FF0000",
+    "#FFFF00",
+    "#808000",
+    "#008000",
+    "#00FFFF",
+    "#008080",
+    "#0000FF",
+    "#FF00FF",
+    "#800080",
+];
+
 function resizeTable() {
     const rows = parseInt(document.getElementById('rows').value, 10);
     const cols = parseInt(document.getElementById('cols').value, 10);
@@ -25,6 +39,9 @@ function resizeTable() {
             const td = document.createElement('td');
             td.textContent = '0'; // Initialize each cell with 0
             td.contentEditable = 'true'; // Make cell editable
+            td.addEventListener('click', function () {
+                updateCellValue(this); // Update cell value when clicked
+            });
             td.addEventListener('input', function () {
                 updateCellColor(this);
             });
@@ -34,9 +51,24 @@ function resizeTable() {
     }
 }
 
+function updateCellValue(cell) {
+    const valueInput = document.getElementById('valueInput');
+    const newValue = valueInput.value.trim();
+    if (newValue.length === 0) {
+        cell.textContent = '0';
+    } else {
+        cell.textContent = newValue;
+    }
+    updateCellColor(cell); // Update color when value is set
+}
+
 function updateCellText() {
-    const text = document.getElementById('cellText').value;
+    const text = document.getElementById('cellText').value.trim();
     const cells = document.querySelectorAll('#myTable tbody td');
+
+    if (text.length === 0) {
+        text = "0";
+    }
 
     cells.forEach(cell => {
         cell.textContent = text;
@@ -45,23 +77,19 @@ function updateCellText() {
 }
 
 function updateCellColor(cell) {
-    const value = cell.textContent.trim();
-    let color;
+    let value = cell.textContent.trim();
+    let color = '';
+
+    if (value.length === 0) {
+        value = "0";
+        cell.textContent = value; // Set to "0" if empty
+    }
 
     if (!isNaN(value) && value !== '') {
         const num = parseFloat(value);
-        // Simple color mapping based on number range
-        if (num <= 10) {
-            color = '#ff9999'; // Light red
-        } else if (num <= 20) {
-            color = '#ffff99'; // Light yellow
-        } else if (num <= 30) {
-            color = '#99ff99'; // Light green
-        } else {
-            color = '#99ccff'; // Light blue
+        if (num < colours.length && num >= 0) {
+            color = colours[num];
         }
-    } else {
-        color = ''; // No color if not a number
     }
 
     cell.style.backgroundColor = color;
@@ -88,4 +116,23 @@ function exportTable() {
 // Initialize table
 document.addEventListener('DOMContentLoaded', () => {
     resizeTable();
+
+    const valueInput = document.getElementById('valueInput'); // Ensure this references the correct input
+
+    function updateInputColor() {
+        const value = parseFloat(valueInput.value);
+        let color = '';
+
+        if (!isNaN(value) && value >= 0 && value < colours.length) {
+            color = colours[value];
+        }
+
+        valueInput.style.backgroundColor = color;
+    }
+
+    // Initial color update
+    updateInputColor();
+
+    // Add event listener to update color on input change
+    valueInput.addEventListener('input', updateInputColor);
 });

@@ -1,4 +1,15 @@
+--temporary
+local objs = {
+    { x = 2,  y = 2,  texture = 1 }, -- x,y,sprite texture
+    { x = 2,  y = 3,  texture = 1 },
+
+    { x = 13, y = 6,  texture = 2 },
+    { x = 13, y = 10, texture = 2 },
+}
+
+
 MAP = {
+    z_buffer = {},
     width = 16,
     height = 16,
     walls = {
@@ -55,7 +66,12 @@ MAP = {
         { 2, 7, 7, 7, 7, 7, 7, 7, 9, 9, 9, 9, 9, 9,  9,  2 },
         { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  2,  2 }
     },
-
+    -- Initialise the z buffer to be a table with the screens width
+    init_z_buffer = function(self)
+        for i = 0, SCREEN_WIDTH do
+            table.insert(self.z_buffer, 0)
+        end
+    end,
     -- Function to draw the walls and floors on the screen
     draw_walls = function(self, player)
         local max_view_dist = 10 -- Maximum distance to draw the walls
@@ -210,10 +226,15 @@ MAP = {
                     end
                 end
             end
+
+            -- Setting z buffer for sprite casting
+            self.z_buffer[x] = perp_wall_dist
         end
 
         -- Drawing final image. This is just for floors and ceilings
         local final_frame = love.graphics.newImage(pixel_buffer)
         love.graphics.draw(final_frame)
+
+        -- Sprite casting --
     end
 }

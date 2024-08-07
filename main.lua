@@ -1,6 +1,7 @@
 require("player")
 require("map")
 require("functions")
+local tick = require("tick")
 
 function love.load()
     -- Setting window size
@@ -39,19 +40,24 @@ function love.load()
         { img = love.image.newImageData("/textures/floor_tile_02.jpg"),     size = 128 },
         { img = love.image.newImageData("/textures/floor_wood_01.jpg"),     size = 128 },
     }
-
-
+    -- Sprites
+    SPRITE_TEXTURES = {
+        { img = love.image.newImageData("/textures/sprite_barrel_01.jpg"), size = 128 },
+        { img = love.image.newImageData("/textures/sprite_lamp_01.jpg"),   size = 128 },
+    }
     -- For limiting fps
     SLEEP = 0
 end
 
 function love.update(dt)
-    -- Limit to 30 fps
-    love.timer.sleep(SLEEP)
+    -- -- Limit to 30 fps
+    -- love.timer.sleep(SLEEP)
 
-    if love.timer.getFPS() > 32 then
-        SLEEP = SLEEP + 0.0001
-    end
+    -- if love.timer.getFPS() > 35 then
+    --     SLEEP = SLEEP + 0.001
+    -- end
+
+    tick.framerate = 31
 
     PLAYER:update(MAP, dt)
 end

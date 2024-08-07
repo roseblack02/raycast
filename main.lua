@@ -13,6 +13,7 @@ function love.load()
     SCALE = { x = 1, y = 1 }
 
     -- Load texture data
+    -- Wall textures need to be loaded in using graphics to use quads
     WALL_TEXTURES = { -- {texture,size}
         { img = love.graphics.newImage("/textures/wall_brick_01.jpg"),   size = 128 },
         { img = love.graphics.newImage("/textures/wall_brick_02.jpg"),   size = 128 },
@@ -25,6 +26,7 @@ function love.load()
         { img = love.graphics.newImage("/textures/wall_painted_04.jpg"), size = 128 },
         { img = love.graphics.newImage("/textures/wall_painted_05.jpg"), size = 128 },
     }
+    -- Floor/ceiling textures need to be loaded in as image data to use getPixel
     FLOOR_TEXTURE = {
         { img = love.image.newImageData("/textures/floor_brick_01.jpg"),    size = 128 },
         { img = love.image.newImageData("/textures/floor_concrete_01.jpg"), size = 128 },

@@ -50,13 +50,6 @@ function love.load()
 end
 
 function love.update(dt)
-    -- -- Limit to 30 fps
-    -- love.timer.sleep(SLEEP)
-
-    -- if love.timer.getFPS() > 35 then
-    --     SLEEP = SLEEP + 0.001
-    -- end
-
     tick.framerate = 31
 
     PLAYER:update(MAP, dt)

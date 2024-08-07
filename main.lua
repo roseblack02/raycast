@@ -25,9 +25,6 @@ function love.load()
         { img = love.graphics.newImage("/textures/wall_painted_04.jpg"), size = 128 },
         { img = love.graphics.newImage("/textures/wall_painted_05.jpg"), size = 128 },
     }
-    for _, texture in ipairs(WALL_TEXTURES) do
-        texture.img:setFilter("nearest", "nearest", 8)
-    end
     FLOOR_TEXTURE = {
         { img = love.image.newImageData("/textures/floor_brick_01.jpg"),    size = 128 },
         { img = love.image.newImageData("/textures/floor_concrete_01.jpg"), size = 128 },

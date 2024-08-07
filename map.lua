@@ -20,60 +20,13 @@ MAP = {
         { 2,  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }
     },
     draw_walls = function(self, player)
-        --TODO try doing walls pixel by pixel and adding them to a buffer
-        --then do ceiling and floors pixel by pixel added to the buffer
-        --then call points function on the buffer
-        --group all points with the same colour and draw them together
+        local max_view_dist = 16
+        local texture_size = 128
 
-        local floor_texture = FLOOR_TEXTURE[1]
-        local ceiling_texture = FLOOR_TEXTURE[2]
+        local pixel_buffer = love.image.newImageData(800, 600)
 
-        -- Precompute the texture size for easy access
-        local floor_tex_size = floor_texture.size
-        local ceiling_tex_size = ceiling_texture.size
-
-        local starting_point = SCREEN_HEIGHT / 2
-
-        -- Drawing the floor and ceiling
-        for y = starting_point, SCREEN_HEIGHT do
-            local p = y - SCREEN_HEIGHT / 2
-            local pos_z = 0.5 * SCREEN_HEIGHT
-            local row_distance = pos_z / (p ~= 0 and p or 1) -- Avoid division by zero
-
-            local floor_step_x = row_distance * (player.dir_x + player.plane_x -
-                (player.dir_x - player.plane_x)) / SCREEN_WIDTH
-            local floor_step_y = row_distance * (player.dir_y + player.plane_y -
-                (player.dir_y - player.plane_y)) / SCREEN_WIDTH
-            local floor_x = player.x + row_distance * (player.dir_x - player.plane_x)
-            local floor_y = player.y + row_distance * (player.dir_y - player.plane_y)
-
-            for x = 0, SCREEN_WIDTH - 1 do
-                local cell_x = math.floor(floor_x)
-                local cell_y = math.floor(floor_y)
-
-                local tx = math.floor(floor_tex_size * (floor_x - cell_x)) % floor_tex_size
-                local ty = math.floor(floor_tex_size * (floor_y - cell_y)) % floor_tex_size
-
-                -- Ensure tx and ty are within valid range
-                tx = math.max(0, math.min(tx, floor_tex_size - 1))
-                ty = math.max(0, math.min(ty, floor_tex_size - 1))
-
-                -- Draw floor
-                local r, g, b = floor_texture.img:getPixel(tx, ty)
-                love.graphics.setColor(r, g, b)
-                love.graphics.points(x, y)
-
-                -- Draw ceiling
-                r, g, b = ceiling_texture.img:getPixel(tx, ty)
-                love.graphics.setColor(r, g, b)
-                love.graphics.points(x, SCREEN_HEIGHT - y)
-
-                floor_x = floor_x + floor_step_x
-                floor_y = floor_y + floor_step_y
-            end
-        end
-
-        for x = 0, SCREEN_WIDTH, 2 do
+        -- Drawing walls --
+        for x = 0, SCREEN_WIDTH - 1, 1 do
             local cam_x = 2 * x / SCREEN_WIDTH - 1
             local ray_dir_x = player.dir_x + player.plane_x * cam_x
             local ray_dir_y = player.dir_y + player.plane_y * cam_x
@@ -91,7 +44,7 @@ MAP = {
 
             local side
 
-            local view_dist, max_view_dist = 0, 16
+            local view_dist = 0
 
             if ray_dir_x < 0 then
                 step_x = -1
@@ -138,55 +91,90 @@ MAP = {
             local draw_start = -line_height / 2 + SCREEN_HEIGHT / 2
             local draw_end = line_height / 2 + SCREEN_HEIGHT / 2
 
+            local wall_x
+            if side == 0 then
+                wall_x = player.y + perp_wall_dist * ray_dir_y
+            else
+                wall_x = player.x + perp_wall_dist * ray_dir_x
+            end
+            wall_x = wall_x - math.floor(wall_x)
+
+            local text_x = math.floor(wall_x * texture_size)
+            if side == 0 and ray_dir_x > 0 then
+                text_x = texture_size - text_x - 1
+            end
+            if side == 1 and ray_dir_y < 0 then
+                text_x = texture_size - text_x - 1
+            end
+
+            local step = 1 * texture_size / line_height
+
             if self.walls[map_y][map_x] > 1 then
-                -- For drawing colours --
-                -- local colours = {
-                --     { 1,    0,   0 },
-                --     { 1,    0.5, 0 },
-                --     { 1,    1,   0 },
-                --     { 0,    1,   0 },
-                --     { 0,    0,   1 },
-                --     { 0.75, 0,   0.75 },
-                --     { 1,    0,   0.5 },
-                --     { 1,    1,   1 }
-                -- }
-
-                -- local wall_col = colours[self.walls[map_y][map_x] - 1]
-
-                -- for i = 1, #wall_col do
-                --     wall_col[i] = wall_col[i] - perp_wall_dist / max_view_dist
-                -- end
-
-                -- love.graphics.setColor(wall_col)
-                -- love.graphics.line(x, draw_start, x, draw_end)
-
                 -- Drawing wall textures using quads --
+                -- NOTE: need to change image.newImageData to graphics.newImage for textures
                 local wall_texture = WALL_TEXTURES[self.walls[map_y][map_x] - 1]
 
                 local shading = 1 - (perp_wall_dist / (max_view_dist / 1.5))
-                local scaling = (draw_end - draw_start) / wall_texture.size
+                local scaling = (draw_end - draw_start) / texture_size
 
-                local wall_x
-                if side == 0 then
-                    wall_x = player.y + perp_wall_dist * ray_dir_y
-                else
-                    wall_x = player.x + perp_wall_dist * ray_dir_x
-                end
-                wall_x = wall_x - math.floor(wall_x)
-
-                local tex_x = math.floor(wall_x * wall_texture.size)
-                if side == 0 and ray_dir_x > 0 then
-                    tex_x = wall_texture.size - tex_x - 1
-                end
-                if side == 1 and ray_dir_y < 0 then
-                    tex_x = wall_texture.size - tex_x - 1
-                end
-
-                local quad = love.graphics.newQuad(tex_x, 0, 2, wall_texture.size, wall_texture.size, wall_texture.size)
+                local quad = love.graphics.newQuad(text_x, 0, 1, texture_size, texture_size, texture_size)
 
                 love.graphics.setColor(shading, shading, shading)
                 love.graphics.draw(wall_texture.img, quad, x, draw_start, 0, 1, scaling)
+                love.graphics.setColor(1, 1, 1)
+            end
+
+            -- Drawing floors --
+            local floor_x_wall, floor_y_wall
+
+            if side == 0 and ray_dir_x > 0 then
+                floor_x_wall = map_x
+                floor_y_wall = map_y + wall_x
+            elseif side == 0 and ray_dir_x < 0 then
+                floor_x_wall = map_x + 1
+                floor_y_wall = map_y + wall_x
+            elseif side == 1 and ray_dir_y > 0 then
+                floor_x_wall = map_x + wall_x
+                floor_y_wall = map_y
+            else
+                floor_x_wall = map_x + wall_x
+                floor_y_wall = map_y + 1
+            end
+
+            local dist_player = 0.5 * SCREEN_HEIGHT / math.tan(60 / 2)
+
+            for y = draw_end, SCREEN_HEIGHT do
+                local current_dist = SCREEN_HEIGHT / (2.0 * y - SCREEN_HEIGHT)
+                local weight = current_dist / perp_wall_dist
+
+                local current_floor_x = weight * floor_x_wall + (1.0 - weight) * player.x
+                local current_floor_y = weight * floor_y_wall + (1.0 - weight) * player.y
+
+                local floor_text_x = math.floor(current_floor_x * texture_size) % texture_size
+                local floor_text_y = math.floor(current_floor_y * texture_size) % texture_size
+
+                local checkerboard = (math.floor(current_floor_x) + math.floor(current_floor_y)) % 2
+
+                local floor_text
+                if checkerboard == 0 then
+                    floor_text = 2
+                else
+                    floor_text = 3
+                end
+
+                if y > 0 and y < SCREEN_HEIGHT - 1 then
+                    -- Draw floor
+                    local r, g, b = FLOOR_TEXTURE[floor_text].img:getPixel(floor_text_x, floor_text_y)
+                    pixel_buffer:setPixel(x, y, r, g, b)
+
+                    -- Draw ceiling
+                    -- r, g, b = ceiling_texture.img:getPixel(floor_text_x, floor_text_y)
+                    -- pixel_buffer:setPixel(x, SCREEN_HEIGHT - y, r, g, b)
+                end
             end
         end
+        -- Final image is drawn to the screen after pixels have been set
+        local final_frame = love.graphics.newImage(pixel_buffer)
+        love.graphics.draw(final_frame)
     end
 }

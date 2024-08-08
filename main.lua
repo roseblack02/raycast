@@ -1,6 +1,5 @@
 require("player")
 require("map")
-require("functions")
 local tick = require("tick")
 
 function love.load()

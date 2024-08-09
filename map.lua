@@ -7,65 +7,79 @@ local objs = {
     { x = 13, y = 10, texture = 2 },
 }
 
-
 MAP = {
     z_buffer = {},
     width = 16,
     height = 16,
+    -- Walls a texture and a wall type
     walls = {
-        { 2,  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 },
-        { 2,  0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2 },
-        { 2,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 2 },
-        { 2,  0, 0, 5, 5, 0, 0, 2, 0, 0, 0, 0, 2, 2, 2, 2 },
-        { 1,  0, 0, 5, 5, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 1 },
-        { 6,  0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2 },
-        { 7,  0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 3 },
-        { 8,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4 },
-        { 9,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 },
-        { 10, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 6 },
-        { 11, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 7 },
-        { 1,  0, 0, 4, 4, 0, 0, 2, 0, 0, 0, 2, 2, 3, 0, 1 },
-        { 2,  0, 0, 4, 4, 0, 0, 2, 0, 0, 0, 8, 0, 4, 0, 2 },
-        { 2,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 6, 5, 0, 2 },
-        { 2,  0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2 },
-        { 2,  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }
+        { { 2, 0 }, { 2, 0 }, { 2, 0 }, { 2, 0 }, { 2, 0 }, { 2, 0 }, { 2, 0 }, { 2, 0 }, { 2, 0 }, { 2, 0 }, { 5, 0 }, { 5, 0 }, { 5, 0 }, { 5, 0 }, { 5, 0 }, { 6, 0 } },
+        { { 2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 6, 0 } },
+        { { 2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 6, 0 } },
+        { { 2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 2, 0 }, { 0, 0 }, { 2, 0 }, { 2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 6, 0 } },
+        { { 2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 2, 0 }, { 0, 0 }, { 2, 1 }, { 2, 2 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 6, 0 } },
+        { { 2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 6, 0 } },
+        { { 2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 6, 0 } },
+        { { 2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 6, 0 } },
+        { { 2, 0 }, { 2, 0 }, { 0, 0 }, { 2, 0 }, { 2, 0 }, { 2, 0 }, { 2, 0 }, { 0, 0 }, { 2, 0 }, { 2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 6, 0 } },
+        { { 2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 2, 0 }, { 0, 0 }, { 2, 1 }, { 2, 2 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 6, 0 } },
+        { { 2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 6, 0 } },
+        { { 2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 6, 0 } },
+        { { 2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 6, 0 } },
+        { { 2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 6, 0 } },
+        { { 2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 6, 0 } },
+        { { 2, 0 }, { 2, 0 }, { 2, 0 }, { 2, 0 }, { 2, 0 }, { 2, 0 }, { 2, 0 }, { 2, 0 }, { 2, 0 }, { 2, 0 }, { 5, 0 }, { 5, 0 }, { 5, 0 }, { 5, 0 }, { 5, 0 }, { 6, 0 } }
     },
     floors = {
-        { 2, 2, 2, 2, 2, 2, 2, 2, 2,  2,  2,  2,  2, 2, 2, 2 },
-        { 2, 3, 2, 3, 2, 3, 2, 5, 10, 10, 10, 10, 3, 4, 3, 2 },
-        { 2, 2, 3, 2, 3, 2, 3, 5, 10, 10, 10, 10, 3, 4, 3, 2 },
-        { 2, 3, 2, 3, 2, 3, 2, 5, 10, 10, 10, 10, 3, 4, 3, 2 },
-        { 2, 2, 3, 2, 3, 2, 3, 5, 10, 10, 10, 10, 3, 4, 3, 2 },
-        { 2, 3, 2, 3, 2, 3, 2, 5, 10, 10, 10, 10, 3, 4, 3, 2 },
-        { 2, 2, 3, 2, 3, 2, 3, 5, 10, 10, 10, 10, 3, 4, 3, 2 },
-        { 2, 3, 2, 3, 2, 3, 2, 5, 10, 10, 10, 10, 3, 4, 3, 2 },
-        { 2, 2, 3, 2, 3, 2, 3, 5, 10, 10, 10, 10, 3, 4, 3, 2 },
-        { 2, 3, 2, 3, 2, 3, 2, 5, 10, 10, 10, 10, 3, 4, 3, 2 },
-        { 2, 2, 3, 2, 3, 2, 3, 5, 10, 10, 10, 10, 3, 4, 3, 2 },
-        { 2, 3, 2, 3, 2, 3, 2, 5, 10, 10, 10, 10, 3, 4, 3, 2 },
-        { 2, 2, 3, 2, 3, 2, 3, 5, 10, 10, 10, 10, 3, 4, 3, 2 },
-        { 2, 3, 2, 3, 2, 3, 2, 5, 10, 10, 10, 10, 3, 4, 3, 2 },
-        { 2, 2, 3, 2, 3, 2, 3, 5, 10, 10, 10, 10, 3, 4, 3, 2 },
-        { 2, 2, 2, 2, 2, 2, 2, 2, 2,  2,  2,  2,  2, 2, 2, 2 }
+        { 0, 0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 10, 10, 10, 10, 10, 0, 5, 5, 5, 2, 3, 4, 3, 2, 0 },
+        { 0, 10, 10, 10, 10, 10, 0, 5, 5, 5, 2, 3, 4, 3, 2, 0 },
+        { 0, 10, 10, 10, 10, 10, 0, 5, 5, 5, 2, 3, 4, 3, 2, 0 },
+        { 0, 10, 10, 10, 10, 10, 0, 5, 5, 5, 2, 3, 4, 3, 2, 0 },
+        { 0, 10, 10, 10, 10, 10, 0, 5, 5, 5, 2, 3, 4, 3, 2, 0 },
+        { 0, 10, 10, 10, 10, 10, 0, 5, 5, 5, 2, 3, 4, 3, 2, 0 },
+        { 0, 10, 10, 10, 10, 10, 0, 5, 5, 5, 2, 3, 4, 3, 2, 0 },
+        { 0, 10, 10, 10, 10, 10, 0, 5, 5, 5, 2, 3, 4, 3, 2, 0 },
+        { 0, 10, 10, 10, 10, 10, 0, 5, 5, 5, 2, 3, 4, 3, 2, 0 },
+        { 0, 10, 10, 10, 10, 10, 0, 5, 5, 5, 2, 3, 4, 3, 2, 0 },
+        { 0, 10, 10, 10, 10, 10, 1, 5, 5, 5, 2, 3, 4, 3, 2, 0 },
+        { 0, 10, 10, 10, 10, 10, 1, 5, 5, 5, 2, 3, 4, 3, 2, 0 },
+        { 0, 10, 10, 10, 10, 10, 1, 5, 5, 5, 2, 3, 4, 3, 2, 0 },
+        { 0, 10, 10, 10, 10, 10, 0, 5, 5, 5, 2, 3, 4, 3, 2, 0 },
+        { 0, 0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
     },
     ceilings = {
-        { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  2,  2 },
-        { 2, 7, 7, 7, 7, 7, 7, 7, 9, 9, 9, 9, 9, 9,  9,  2 },
-        { 2, 7, 7, 7, 7, 7, 7, 7, 9, 9, 9, 9, 9, 9,  9,  2 },
-        { 2, 7, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 2, 10, 10, 2 },
-        { 2, 7, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 2, 10, 10, 2 },
-        { 2, 7, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 2, 10, 10, 2 },
-        { 2, 7, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 2, 10, 10, 2 },
-        { 2, 7, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 2, 10, 10, 2 },
-        { 2, 7, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 2, 10, 10, 2 },
-        { 2, 7, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 2, 10, 10, 2 },
-        { 2, 7, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 2, 10, 10, 2 },
-        { 2, 7, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 2, 10, 10, 2 },
-        { 2, 7, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 2, 10, 10, 2 },
-        { 2, 7, 7, 7, 7, 7, 7, 7, 9, 9, 9, 9, 9, 9,  9,  2 },
-        { 2, 7, 7, 7, 7, 7, 7, 7, 9, 9, 9, 9, 9, 9,  9,  2 },
-        { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  2,  2 }
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 2, 2, 2, 2, 2, 0, 0, 2, 2, 2, 2, 0, 0, 0, 0 },
+        { 0, 2, 2, 2, 2, 2, 0, 0, 2, 2, 2, 2, 0, 0, 0, 0 },
+        { 0, 2, 2, 2, 2, 2, 0, 0, 2, 2, 2, 2, 0, 0, 0, 0 },
+        { 0, 2, 2, 2, 2, 2, 0, 0, 2, 2, 2, 2, 0, 0, 0, 0 },
+        { 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
     },
+    -- For diagonal walls
+    wall_intersect = function(self, wall_x0, wall_y0, wall_x1, wall_y1, player_x, player_y, dir_x, dir_y)
+        local i = { tr = -1, tw = -1 }
+        local m = (wall_y1 - wall_y0) / (wall_x1 - wall_x0)
+
+        -- Check for parallel ray
+        if dir_y == m * dir_x then
+            return i
+        end
+
+        i.tr = (wall_y0 + m * (player_x - wall_x0) - player_y) / (dir_y - m * dir_x)
+        i.tw = (player_x + dir_x * i.tr - wall_x0) / (wall_x1 - wall_x0)
+        return i
+    end,
     -- Initialise the z buffer to be a table with the screens width
     init_z_buffer = function(self)
         for i = 0, SCREEN_WIDTH do
@@ -74,7 +88,7 @@ MAP = {
     end,
     -- Function to draw the walls and floors on the screen
     draw_walls = function(self, player)
-        local max_view_dist = 10 -- Maximum distance to draw the walls
+        local max_view_dist = 8  -- Maximum distance to draw the walls
         local texture_size = 128 -- Size of textures but should be using texture.size idealy
 
         -- Create an image data buffer to store the pixel data
@@ -115,6 +129,7 @@ MAP = {
             end
 
             -- Using DDA to find the wall
+            ::rayscan::
             while view_dist < max_view_dist do
                 if side_dist_x < side_dist_y then
                     side_dist_x = side_dist_x + delta_dist_x
@@ -134,16 +149,51 @@ MAP = {
                 end
 
                 -- Check if the wall has been hit
-                if self.walls[map_y][map_x] > 0 then
+                if self.walls[map_y][map_x][1] > 0 then
                     view_dist = max_view_dist
                 end
             end
 
-            -- Calculate perpendicular wall distance
-            if side == 0 then
-                perp_wall_dist = (side_dist_x - delta_dist_x)
-            else
-                perp_wall_dist = (side_dist_y - delta_dist_y)
+            local wall_x
+            local diagonal = false
+            local wall_type = self.walls[map_y][map_x][2]
+
+            -- Check for diagonal walls
+            if wall_type > 0 and wall_type < 5 then
+                local i
+                local d
+                if wall_type == 1 then
+                    i = self:wall_intersect(map_x, map_y, map_x + 1, map_y + 1,
+                        player.x, player.y, ray_dir_x, ray_dir_y)
+
+                    d = player.x - map_x - player.y + map_y
+                else
+                    i = self:wall_intersect(map_x, map_y + 1, map_x + 1, map_y,
+                        player.x, player.y, ray_dir_x, ray_dir_y)
+                    d = map_x - player.x - player.y + map_y + 1
+                end
+
+                if i.tw < 0 or i.tw >= 1 then
+                    view_dist = 0
+                    goto rayscan
+                end
+
+                perp_wall_dist = i.tr
+                wall_x = i.tw
+
+                if d < 0 then
+                    wall_x = 1 - wall_x
+                end
+
+                diagonal = true
+                side = 3
+            elseif wall_type == 0 then
+                -- Calculate perpendicular wall distance
+                if side == 0 then
+                    perp_wall_dist = (side_dist_x - delta_dist_x)
+                else
+                    perp_wall_dist = (side_dist_y - delta_dist_y)
+                end
             end
 
             -- Calculate the height of the wall slice
@@ -154,14 +204,15 @@ MAP = {
             -- Calculate shading based on distance
             local shading = 1 - (perp_wall_dist / (max_view_dist / 1.5))
 
-            local wall_x
             -- Calculate wall texture coordinates based on side
-            if side == 0 then
-                wall_x = player.y + perp_wall_dist * ray_dir_y
-            else
-                wall_x = player.x + perp_wall_dist * ray_dir_x
+            if not diagonal then
+                if side == 0 then
+                    wall_x = player.y + perp_wall_dist * ray_dir_y
+                else
+                    wall_x = player.x + perp_wall_dist * ray_dir_x
+                end
+                wall_x = wall_x - math.floor(wall_x)
             end
-            wall_x = wall_x - math.floor(wall_x)
 
             local text_x = math.floor(wall_x * texture_size)
             if side == 0 and ray_dir_x > 0 then
@@ -172,8 +223,8 @@ MAP = {
             end
 
             -- Drawing walls --
-            if self.walls[map_y][map_x] > 1 then
-                local wall_texture = WALL_TEXTURES[self.walls[map_y][map_x] - 1]
+            if self.walls[map_y][map_x][1] > 1 then
+                local wall_texture = WALL_TEXTURES[self.walls[map_y][map_x][1] - 1]
                 local scaling = (draw_end - draw_start) / texture_size
                 local quad = love.graphics.newQuad(text_x, 0, 1, texture_size, texture_size, texture_size)
 
@@ -214,13 +265,13 @@ MAP = {
 
                 if y > 0 and y < SCREEN_HEIGHT - 1 then
                     if floor_text > 0 then
-                        local r, g, b = FLOOR_TEXTURE[floor_text].img:getPixel(floor_text_x, floor_text_y)
+                        local r, g, b = FLOOR_TEXTURES[floor_text].img:getPixel(floor_text_x, floor_text_y)
                         r, g, b = r * floor_shading, g * floor_shading, b * floor_shading
                         pixel_buffer:setPixel(x, y, r, g, b)
                     end
 
                     if ceiling_text > 0 then
-                        local r, g, b = FLOOR_TEXTURE[ceiling_text].img:getPixel(floor_text_x, floor_text_y)
+                        local r, g, b = FLOOR_TEXTURES[ceiling_text].img:getPixel(floor_text_x, floor_text_y)
                         r, g, b = r * floor_shading, g * floor_shading, b * floor_shading
                         pixel_buffer:setPixel(x, SCREEN_HEIGHT - y, r, g, b)
                     end
@@ -235,6 +286,6 @@ MAP = {
         local final_frame = love.graphics.newImage(pixel_buffer)
         love.graphics.draw(final_frame)
 
-        -- Sprite casting --
+        -- Sprite casting -
     end
 }

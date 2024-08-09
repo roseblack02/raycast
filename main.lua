@@ -27,7 +27,7 @@ function love.load()
         { img = love.graphics.newImage("/textures/wall_painted_05.jpg"), size = 128 },
     }
     -- Floor/ceiling textures need to be loaded in as image data to use getPixel
-    FLOOR_TEXTURE = {
+    FLOOR_TEXTURES = {
         { img = love.image.newImageData("/textures/floor_brick_01.jpg"),    size = 128 },
         { img = love.image.newImageData("/textures/floor_concrete_01.jpg"), size = 128 },
         { img = love.image.newImageData("/textures/floor_concrete_02.jpg"), size = 128 },

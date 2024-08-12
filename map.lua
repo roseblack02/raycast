@@ -235,6 +235,7 @@ MAP = {
 
             -- Drawing floors --
             local floor_x_wall, floor_y_wall
+            -- Straight walls
             if side == 0 and ray_dir_x > 0 then
                 floor_x_wall = map_x
                 floor_y_wall = map_y + wall_x

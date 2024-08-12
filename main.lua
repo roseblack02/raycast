@@ -1,5 +1,6 @@
-require("player")
-require("map")
+local player = require("player")
+local map = require("map")
+local objects = require("objects")
 local tick = require("tick")
 
 function love.load()
@@ -46,12 +47,21 @@ function love.load()
     }
     -- For limiting fps
     SLEEP = 0
+
+    -- Game objects
+    OBJS = {}
+    objects.create_obj(OBJS, "barrel", 2, 2, 1)
+    objects.create_obj(OBJS, "barrel", 3, 2, 1)
+    objects.create_obj(OBJS, "barrel", 4.5, 2, 1)
+    objects.create_obj(OBJS, "lamp_post", 15, 3, 2)
+    objects.create_obj(OBJS, "lamp_post", 11, 8, 2)
+    objects.create_obj(OBJS, "lamp_post", 15, 14, 2)
 end
 
 function love.update(dt)
     tick.framerate = 31
 
-    PLAYER:update(MAP, dt)
+    player:update(map)
 end
 
 function love.resize(w, h)
@@ -66,7 +76,7 @@ function love.draw()
     -- Make sure everything is scaled to current resolution
     love.graphics.scale(SCALE.x, SCALE.y)
 
-    MAP:draw_walls(PLAYER)
+    map:raycasting(player)
 
     love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 10)
 end

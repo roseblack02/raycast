@@ -1,4 +1,4 @@
-PLAYER = {
+local player = {
     x = 3,
     y = 3,
     dir_x = -1,
@@ -16,7 +16,9 @@ PLAYER = {
         look_r = "right",
         inv = "tab",
     },
-    update = function(self, map, dt)
+    -- Update function for handling things such as player movement and interactions
+    -- map is the map object
+    update = function(self, map)
         -- Forwards and back
         if love.keyboard.isDown(self.keybinds.fward) then
             if map.walls[math.floor(self.y)][math.floor(self.x + self.dir_x * self.move_speed)][1] == 0 then
@@ -72,7 +74,10 @@ PLAYER = {
             self.plane_y = old_plane_x * math.sin(-self.cam_speed) + self.plane_y * math.cos(-self.cam_speed)
         end
     end,
+    -- Function for drawing the players hands/weapons etc.
     draw = function(self)
 
     end
 }
+
+return player

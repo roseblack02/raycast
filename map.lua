@@ -1,13 +1,4 @@
---temporary
-local objs = {
-    { x = 2,  y = 2,  texture = 1 }, -- x,y,sprite texture
-    { x = 2,  y = 3,  texture = 1 },
-
-    { x = 13, y = 6,  texture = 2 },
-    { x = 13, y = 10, texture = 2 },
-}
-
-MAP = {
+local map = {
     z_buffer = {},
     width = 16,
     height = 16,
@@ -51,10 +42,10 @@ MAP = {
     ceilings = {
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
         { 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-        { 0, 2, 2, 2, 2, 2, 0, 0, 2, 2, 2, 2, 0, 0, 0, 0 },
-        { 0, 2, 2, 2, 2, 2, 0, 0, 2, 2, 2, 2, 0, 0, 0, 0 },
-        { 0, 2, 2, 2, 2, 2, 0, 0, 2, 2, 2, 2, 0, 0, 0, 0 },
-        { 0, 2, 2, 2, 2, 2, 0, 0, 2, 2, 2, 2, 0, 0, 0, 0 },
+        { 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 0, 0, 0, 0, 0 },
+        { 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 0, 0, 0, 0, 0 },
+        { 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 0, 0, 0, 0, 0 },
+        { 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 0, 0, 0, 0, 0 },
         { 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
         { 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
         { 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -86,8 +77,9 @@ MAP = {
             table.insert(self.z_buffer, 0)
         end
     end,
-    -- Function to draw the walls and floors on the screen
-    draw_walls = function(self, player)
+    -- Function to draw the walls, floors, ceilings, and object sprites on the screen
+    -- player is the player object
+    raycasting = function(self, player)
         local max_view_dist = 8  -- Maximum distance to draw the walls
         local texture_size = 128 -- Size of textures but should be using texture.size idealy
 
@@ -257,7 +249,7 @@ MAP = {
                 floor_y_wall = map_y + 1
             end
 
-            for y = draw_end, SCREEN_HEIGHT do
+            for y = draw_end - 1, SCREEN_HEIGHT do
                 local current_dist = SCREEN_HEIGHT / (2.0 * y - SCREEN_HEIGHT)
                 local weight = current_dist / perp_wall_dist
 
@@ -286,7 +278,7 @@ MAP = {
                 end
             end
 
-            -- Setting z buffer for sprite casting
+            -- Store distance in the Z buffer
             self.z_buffer[x] = perp_wall_dist
         end
 
@@ -297,3 +289,5 @@ MAP = {
         -- Sprite casting -
     end
 }
+
+return map

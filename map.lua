@@ -159,41 +159,48 @@ MAP = {
             local wall_type = self.walls[map_y][map_x][2]
 
             -- Check for diagonal walls
-            if wall_type > 0 and wall_type < 5 then
-                local i
-                local d
-                if wall_type == 1 then
-                    i = self:wall_intersect(map_x, map_y, map_x + 1, map_y + 1,
-                        player.x, player.y, ray_dir_x, ray_dir_y)
+            -- if wall_type > 0 and wall_type < 5 then
+            --     local i
+            --     local d
+            --     if wall_type == 1 then
+            --         i = self:wall_intersect(map_x, map_y, map_x + 1, map_y + 1,
+            --             player.x, player.y, ray_dir_x, ray_dir_y)
 
-                    d = player.x - map_x - player.y + map_y
-                else
-                    i = self:wall_intersect(map_x, map_y + 1, map_x + 1, map_y,
-                        player.x, player.y, ray_dir_x, ray_dir_y)
-                    d = map_x - player.x - player.y + map_y + 1
-                end
+            --         d = player.x - map_x - player.y + map_y
+            --     else
+            --         i = self:wall_intersect(map_x, map_y + 1, map_x + 1, map_y,
+            --             player.x, player.y, ray_dir_x, ray_dir_y)
+            --         d = map_x - player.x - player.y + map_y + 1
+            --     end
 
-                if i.tw < 0 or i.tw >= 1 then
-                    view_dist = 0
-                    goto rayscan
-                end
+            --     if i.tw < 0 or i.tw >= 1 then
+            --         view_dist = 0
+            --         goto rayscan
+            --     end
 
-                perp_wall_dist = i.tr
-                wall_x = i.tw
+            --     perp_wall_dist = i.tr
+            --     wall_x = i.tw
 
-                if d < 0 then
-                    wall_x = 1 - wall_x
-                end
+            --     if d < 0 then
+            --         wall_x = 1 - wall_x
+            --     end
 
-                diagonal = true
-                side = 3
-            elseif wall_type == 0 then
-                -- Calculate perpendicular wall distance
-                if side == 0 then
-                    perp_wall_dist = (side_dist_x - delta_dist_x)
-                else
-                    perp_wall_dist = (side_dist_y - delta_dist_y)
-                end
+            --     diagonal = true
+            --     side = 3
+            -- elseif wall_type == 0 then
+            --     -- Calculate perpendicular wall distance
+            --     if side == 0 then
+            --         perp_wall_dist = (side_dist_x - delta_dist_x)
+            --     else
+            --         perp_wall_dist = (side_dist_y - delta_dist_y)
+            --     end
+            -- end
+
+            -- Calculate perpendicular wall distance
+            if side == 0 then
+                perp_wall_dist = (side_dist_x - delta_dist_x)
+            else
+                perp_wall_dist = (side_dist_y - delta_dist_y)
             end
 
             -- Calculate the height of the wall slice

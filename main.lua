@@ -42,20 +42,20 @@ function love.load()
     }
     -- Sprites
     SPRITE_TEXTURES = {
-        { img = love.image.newImageData("/textures/sprite_barrel_01.jpg"), size = 128 },
-        { img = love.image.newImageData("/textures/sprite_lamp_01.jpg"),   size = 128 },
+        { img = love.graphics.newImage("/textures/sprite_barrel_01.jpg"), size = 128 },
+        { img = love.graphics.newImage("/textures/sprite_lamp_01.jpg"),   size = 128 },
     }
     -- For limiting fps
     SLEEP = 0
 
     -- Game objects
-    OBJS = {}
-    objects.create_obj(OBJS, "barrel", 2, 2, 1)
-    objects.create_obj(OBJS, "barrel", 3, 2, 1)
-    objects.create_obj(OBJS, "barrel", 4.5, 2, 1)
-    objects.create_obj(OBJS, "lamp_post", 15, 3, 2)
-    objects.create_obj(OBJS, "lamp_post", 11, 8, 2)
-    objects.create_obj(OBJS, "lamp_post", 15, 14, 2)
+    OBJ = {}
+    table.insert(OBJ, objects:create_obj("barrel", 2, 2, 1))
+    table.insert(OBJ, objects:create_obj("barrel", 3, 2, 1))
+    table.insert(OBJ, objects:create_obj("barrel", 4.5, 2, 1))
+    table.insert(OBJ, objects:create_obj("lamp_post", 15, 3, 2))
+    table.insert(OBJ, objects:create_obj("lamp_post", 11, 8, 2))
+    table.insert(OBJ, objects:create_obj("lamp_post", 15, 14, 2))
 end
 
 function love.update(dt)
@@ -76,7 +76,7 @@ function love.draw()
     -- Make sure everything is scaled to current resolution
     love.graphics.scale(SCALE.x, SCALE.y)
 
-    map:raycasting(player)
+    map:raycasting(player, OBJ)
 
     love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 10)
 end

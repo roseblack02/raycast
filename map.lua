@@ -109,11 +109,70 @@ local map = {
         local max_view_dist = 8  -- Maximum distance to draw the walls
         local texture_size = 128 -- Size of textures but should be using texture.size idealy
 
+        -- Drawing the floor and ceiling --
         -- Create an image data buffer to store the pixel data
         local pixel_buffer = love.image.newImageData(800, 600)
 
-        -- TODO try putting floor casting bakc to the start of the function
-        -- hopefully might allow for angled walls
+        local starting_point = SCREEN_HEIGHT / 2
+        for y = starting_point, SCREEN_HEIGHT - 1 do
+            local p = y - SCREEN_HEIGHT / 2
+            local pos_z = 0.5 * SCREEN_HEIGHT
+            local row_dist = pos_z / (p ~= 0 and p or 1) -- Avoid division by zero
+
+            local floor_step_x = row_dist * (player.dir_x + player.plane_x -
+                (player.dir_x - player.plane_x)) / SCREEN_WIDTH
+            local floor_step_y = row_dist * (player.dir_y + player.plane_y -
+                (player.dir_y - player.plane_y)) / SCREEN_WIDTH
+            local floor_x = player.x + row_dist * (player.dir_x - player.plane_x)
+            local floor_y = player.y + row_dist * (player.dir_y - player.plane_y)
+
+            if row_dist < max_view_dist then
+                for x = 0, SCREEN_WIDTH - 1 do
+                    local cell_x = math.floor(floor_x)
+                    local cell_y = math.floor(floor_y)
+
+                    local tx = math.floor(texture_size * (floor_x - cell_x)) % texture_size
+                    local ty = math.floor(texture_size * (floor_y - cell_y)) % texture_size
+
+                    -- Ensure tx and ty are within valid range
+                    tx = math.max(0, math.min(tx, texture_size - 1))
+                    ty = math.max(0, math.min(ty, texture_size - 1))
+
+                    -- Get texture from respective tables
+                    local cell_x = math.abs(math.floor(floor_x))
+                    local cell_y = math.abs(math.floor(floor_y))
+
+                    if cell_x > 0 and cell_x < self.width
+                        and cell_y > 0 and cell_y < self.height then
+                        local floor_text = self.floors[cell_y][cell_x]
+                        local ceiling_text = self.ceilings[cell_y][cell_x]
+                        local floor_shading = 1 - (row_dist / (max_view_dist / 1.5))
+
+                        if y > 0 and y < SCREEN_HEIGHT - 1 then
+                            if floor_text > 0 then
+                                local r, g, b = FLOOR_TEXTURES[floor_text].img:getPixel(tx, ty)
+                                r, g, b = r * floor_shading, g * floor_shading, b * floor_shading
+                                pixel_buffer:setPixel(x, y, r, g, b)
+                            end
+
+                            if ceiling_text > 0 then
+                                local r, g, b = FLOOR_TEXTURES[ceiling_text].img:getPixel(tx, ty)
+                                r, g, b = r * floor_shading, g * floor_shading, b * floor_shading
+                                pixel_buffer:setPixel(x, SCREEN_HEIGHT - y, r, g, b)
+                            end
+                        end
+                    end
+                    floor_x = floor_x + floor_step_x
+                    floor_y = floor_y + floor_step_y
+                end
+            end
+        end
+
+        -- Drawing final image. This is just for floors and ceilings
+        local final_frame = love.graphics.newImage(pixel_buffer)
+        love.graphics.draw(final_frame)
+
+        -- Drawing walls --
         for x = 0, SCREEN_WIDTH - 1, 1 do
             -- Get direction
             local cam_x = 2 * x / SCREEN_WIDTH - 1
@@ -179,42 +238,42 @@ local map = {
             local wall_type = self.walls[map_y][map_x][2]
 
             -- Check for diagonal walls
-            -- if wall_type > 0 and wall_type < 5 then
-            --     local i
-            --     local d
-            --     if wall_type == 1 then
-            --         i = self:wall_intersect(map_x, map_y, map_x + 1, map_y + 1,
-            --             player.x, player.y, ray_dir_x, ray_dir_y)
+            if wall_type > 0 and wall_type < 5 then
+                local i
+                local d
+                if wall_type == 1 then
+                    i = self:wall_intersect(map_x, map_y, map_x + 1, map_y + 1,
+                        player.x, player.y, ray_dir_x, ray_dir_y)
 
-            --         d = player.x - map_x - player.y + map_y
-            --     else
-            --         i = self:wall_intersect(map_x, map_y + 1, map_x + 1, map_y,
-            --             player.x, player.y, ray_dir_x, ray_dir_y)
-            --         d = map_x - player.x - player.y + map_y + 1
-            --     end
+                    d = player.x - map_x - player.y + map_y
+                else
+                    i = self:wall_intersect(map_x, map_y + 1, map_x + 1, map_y,
+                        player.x, player.y, ray_dir_x, ray_dir_y)
+                    d = map_x - player.x - player.y + map_y + 1
+                end
 
-            --     if i.tw < 0 or i.tw >= 1 then
-            --         view_dist = 0
-            --         goto rayscan
-            --     end
+                if i.tw < 0 or i.tw >= 1 then
+                    view_dist = 0
+                    goto rayscan
+                end
 
-            --     perp_wall_dist = i.tr
-            --     wall_x = i.tw
+                perp_wall_dist = i.tr
+                wall_x = i.tw
 
-            --     if d < 0 then
-            --         wall_x = 1 - wall_x
-            --     end
+                if d < 0 then
+                    wall_x = 1 - wall_x
+                end
 
-            --     diagonal = true
-            --     side = 3
-            -- elseif wall_type == 0 then
-            --     -- Calculate perpendicular wall distance
-            --     if side == 0 then
-            --         perp_wall_dist = (side_dist_x - delta_dist_x)
-            --     else
-            --         perp_wall_dist = (side_dist_y - delta_dist_y)
-            --     end
-            -- end
+                diagonal = true
+                side = 3
+            elseif wall_type == 0 then
+                -- Calculate perpendicular wall distance
+                if side == 0 then
+                    perp_wall_dist = (side_dist_x - delta_dist_x)
+                else
+                    perp_wall_dist = (side_dist_y - delta_dist_y)
+                end
+            end
 
             -- Calculate perpendicular wall distance
             if side == 0 then
@@ -249,7 +308,7 @@ local map = {
                 text_x = texture_size - text_x - 1
             end
 
-            -- Drawing walls --
+            -- Drawing walls using quads
             if self.walls[map_y][map_x][1] > 1 then
                 local wall_texture = WALL_TEXTURES[self.walls[map_y][map_x][1] - 1]
                 local scaling = (draw_end - draw_start) / texture_size
@@ -260,116 +319,70 @@ local map = {
                 love.graphics.setColor(1, 1, 1)
             end
 
-            -- Drawing floors --
-            local floor_x_wall, floor_y_wall
-            -- Straight walls
-            if side == 0 and ray_dir_x > 0 then
-                floor_x_wall = map_x
-                floor_y_wall = map_y + wall_x
-            elseif side == 0 and ray_dir_x < 0 then
-                floor_x_wall = map_x + 1
-                floor_y_wall = map_y + wall_x
-            elseif side == 1 and ray_dir_y > 0 then
-                floor_x_wall = map_x + wall_x
-                floor_y_wall = map_y
-            else
-                floor_x_wall = map_x + wall_x
-                floor_y_wall = map_y + 1
-            end
-
-            for y = draw_end - 1, SCREEN_HEIGHT do
-                local current_dist = SCREEN_HEIGHT / (2.0 * y - SCREEN_HEIGHT)
-                local weight = current_dist / perp_wall_dist
-
-                local current_floor_x = weight * floor_x_wall + (1.0 - weight) * player.x
-                local current_floor_y = weight * floor_y_wall + (1.0 - weight) * player.y
-
-                local floor_text_x = math.floor(current_floor_x * texture_size) % texture_size
-                local floor_text_y = math.floor(current_floor_y * texture_size) % texture_size
-
-                local floor_text = self.floors[math.floor(current_floor_y)][math.floor(current_floor_x)]
-                local ceiling_text = self.ceilings[math.floor(current_floor_y)][math.floor(current_floor_x)]
-                local floor_shading = 1 - (current_dist / (max_view_dist / 1.5))
-
-                if y > 0 and y < SCREEN_HEIGHT - 1 then
-                    if floor_text > 0 then
-                        local r, g, b = FLOOR_TEXTURES[floor_text].img:getPixel(floor_text_x, floor_text_y)
-                        r, g, b = r * floor_shading, g * floor_shading, b * floor_shading
-                        pixel_buffer:setPixel(x, y, r, g, b)
-                    end
-
-                    if ceiling_text > 0 then
-                        local r, g, b = FLOOR_TEXTURES[ceiling_text].img:getPixel(floor_text_x, floor_text_y)
-                        r, g, b = r * floor_shading, g * floor_shading, b * floor_shading
-                        pixel_buffer:setPixel(x, SCREEN_HEIGHT - y, r, g, b)
-                    end
-                end
-            end
-
             -- Store distance of every wall hit in the Z buffer
             self.z_buffer[x] = perp_wall_dist
         end
 
-        -- Drawing final image. This is just for floors and ceilings
-        local final_frame = love.graphics.newImage(pixel_buffer)
-        love.graphics.draw(final_frame)
+        -- -- Drawing final image. This is just for floors and ceilings
+        -- local final_frame = love.graphics.newImage(pixel_buffer)
+        -- love.graphics.draw(final_frame)
 
-        -- Sprite casting --
-        for spr = 1, #sprite_objs do
-            local dist = ((player.x - sprite_objs[spr].x) ^ 2) + ((player.y - sprite_objs[spr].y) ^ 2)
-            -- Only draw sprite if the distance is with the max view distance
-            if dist < max_view_dist then
-                -- Get position
-                local sprite_x = sprite_objs[spr].x - player.x
-                local sprite_y = sprite_objs[spr].y - player.y
+        -- -- Sprite casting --
+        -- for spr = 1, #sprite_objs do
+        --     local dist = ((player.x - sprite_objs[spr].x) ^ 2) + ((player.y - sprite_objs[spr].y) ^ 2)
+        --     -- Only draw sprite if the distance is with the max view distance
+        --     if dist < max_view_dist then
+        --         -- Get position
+        --         local sprite_x = sprite_objs[spr].x - player.x
+        --         local sprite_y = sprite_objs[spr].y - player.y
 
-                -- Transform sprite with the inverse camera matrix
-                -- [ plane_x   dir_x ] -1                                       [ dir_y      -dir_x ]
-                -- [                 ]   =  1/(plane_x*dir_y-dir_x*plane_y) *   [                   ]
-                -- [ plane_y   dir_y ]                                          [ -plane_y  plane_x ]
+        --         -- Transform sprite with the inverse camera matrix
+        --         -- [ plane_x   dir_x ] -1                                       [ dir_y      -dir_x ]
+        --         -- [                 ]   =  1/(plane_x*dir_y-dir_x*plane_y) *   [                   ]
+        --         -- [ plane_y   dir_y ]                                          [ -plane_y  plane_x ]
 
-                local inv_det = 1 / (player.plane_x * player.dir_y - player.dir_x * player.plane_y)
+        --         local inv_det = 1 / (player.plane_x * player.dir_y - player.dir_x * player.plane_y)
 
-                local transofrm_x = inv_det * (player.dir_y * sprite_x - player.dir_x * sprite_y)
-                local transform_y = inv_det * (-player.plane_y * sprite_x + player.plane_x * sprite_y)
+        --         local transofrm_x = inv_det * (player.dir_y * sprite_x - player.dir_x * sprite_y)
+        --         local transform_y = inv_det * (-player.plane_y * sprite_x + player.plane_x * sprite_y)
 
-                local sprite_screen_x = math.floor((SCREEN_WIDTH / 2) * (1 + transofrm_x / transform_y))
+        --         local sprite_screen_x = math.floor((SCREEN_WIDTH / 2) * (1 + transofrm_x / transform_y))
 
-                -- Line height
-                local sprite_height = math.abs(math.floor(SCREEN_HEIGHT / (transform_y)))
-                local draw_start_y = -sprite_height / 2 + SCREEN_HEIGHT / 2
-                if draw_start_y < 0 then draw_start_y = 0 end
-                local draw_end_y = sprite_height / 2 + SCREEN_HEIGHT / 2
-                if draw_end_y >= SCREEN_HEIGHT then draw_end_y = SCREEN_HEIGHT - 1 end
+        --         -- Line height
+        --         local sprite_height = math.abs(math.floor(SCREEN_HEIGHT / (transform_y)))
+        --         local draw_start_y = -sprite_height / 2 + SCREEN_HEIGHT / 2
+        --         if draw_start_y < 0 then draw_start_y = 0 end
+        --         local draw_end_y = sprite_height / 2 + SCREEN_HEIGHT / 2
+        --         if draw_end_y >= SCREEN_HEIGHT then draw_end_y = SCREEN_HEIGHT - 1 end
 
-                -- Texture width
-                local sprite_width = math.abs(math.floor(SCREEN_HEIGHT / (transform_y)))
-                local draw_start_x = -sprite_width / 2 + sprite_screen_x
-                if draw_start_x < 0 then draw_start_x = 0 end
-                local draw_end_x = sprite_width / 2 + sprite_screen_x
-                if draw_end_x >= SCREEN_WIDTH then draw_end_x = SCREEN_WIDTH - 1 end
+        --         -- Texture width
+        --         local sprite_width = math.abs(math.floor(SCREEN_HEIGHT / (transform_y)))
+        --         local draw_start_x = -sprite_width / 2 + sprite_screen_x
+        --         if draw_start_x < 0 then draw_start_x = 0 end
+        --         local draw_end_x = sprite_width / 2 + sprite_screen_x
+        --         if draw_end_x >= SCREEN_WIDTH then draw_end_x = SCREEN_WIDTH - 1 end
 
-                local text_num = sprite_objs[spr].texture
-                for stripe = draw_start_x, draw_end_x do
-                    -- Check if the sprite  should be visible before drawing
-                    if stripe > 0 and stripe < SCREEN_WIDTH
-                        and transform_y < self.z_buffer[stripe]
-                        and transform_y > 0 then
-                        -- NOTE 256 might just be texture size * 4
-                        local text_x = math.floor(256 * (stripe - (-sprite_width / 2 + sprite_screen_x))
-                            * texture_size / sprite_width) / 256
+        --         local text_num = sprite_objs[spr].texture
+        --         for stripe = draw_start_x, draw_end_x do
+        --             -- Check if the sprite  should be visible before drawing
+        --             if stripe > 0 and stripe < SCREEN_WIDTH
+        --                 and transform_y < self.z_buffer[stripe]
+        --                 and transform_y > 0 then
+        --                 -- NOTE 256 might just be texture size * 4
+        --                 local text_x = math.floor(256 * (stripe - (-sprite_width / 2 + sprite_screen_x))
+        --                     * texture_size / sprite_width) / 256
 
-                        local sprite_texture = SPRITE_TEXTURES[text_num]
-                        local scaling = (draw_end_y - draw_start_y) / texture_size
-                        local quad = love.graphics.newQuad(text_x, 0, 1, texture_size, texture_size, texture_size)
+        --                 local sprite_texture = SPRITE_TEXTURES[text_num]
+        --                 local scaling = (draw_end_y - draw_start_y) / texture_size
+        --                 local quad = love.graphics.newQuad(text_x, 0, 1, texture_size, texture_size, texture_size)
 
-                        love.graphics.setColor(0, 0, 0)
-                        love.graphics.draw(sprite_texture.img, quad, stripe, draw_start_x, 0, 1, scaling)
-                        love.graphics.setColor(1, 1, 1)
-                    end
-                end
-            end
-        end
+        --                 love.graphics.setColor(0, 0, 0)
+        --                 love.graphics.draw(sprite_texture.img, quad, stripe, draw_start_x, 0, 1, scaling)
+        --                 love.graphics.setColor(1, 1, 1)
+        --             end
+        --         end
+        --     end
+        -- end
     end
 }
 

@@ -42,20 +42,24 @@ function love.load()
         { img = love.image.newImageData("/textures/floor_grass_01.jpg"),    size = 128 },
         { img = love.image.newImageData("/textures/floor_metal_01.jpg"),    size = 128 },
         { img = love.image.newImageData("/textures/floor_metal_02.jpg"),    size = 128 },
-        { img = love.image.newImageData("/textures/floor_stone_01.jpg"), size = 128 },
-        { img = love.image.newImageData("/textures/floor_stone_02.jpg"), size = 128 },
+        { img = love.image.newImageData("/textures/floor_stone_01.jpg"),    size = 128 },
+        { img = love.image.newImageData("/textures/floor_stone_02.jpg"),    size = 128 },
         { img = love.image.newImageData("/textures/floor_tile_01.jpg"),     size = 128 },
         { img = love.image.newImageData("/textures/floor_tile_02.jpg"),     size = 128 },
         { img = love.image.newImageData("/textures/floor_wood_01.jpg"),     size = 128 },
-        { img = love.image.newImageData("/textures/wall_painted_01.jpg"), size = 128 },
-        { img = love.image.newImageData("/textures/wall_painted_02.jpg"), size = 128 },
-        { img = love.image.newImageData("/textures/wall_painted_03.jpg"), size = 128 },
-        { img = love.image.newImageData("/textures/wall_painted_04.jpg"), size = 128 },
+        { img = love.image.newImageData("/textures/wall_painted_01.jpg"),   size = 128 },
+        { img = love.image.newImageData("/textures/wall_painted_02.jpg"),   size = 128 },
+        { img = love.image.newImageData("/textures/wall_painted_03.jpg"),   size = 128 },
+        { img = love.image.newImageData("/textures/wall_painted_04.jpg"),   size = 128 },
     }
     -- Sprites
     SPRITE_TEXTURES = {
         { img = love.graphics.newImage("/textures/sprite_barrel_01.jpg"), size = 128 },
         { img = love.graphics.newImage("/textures/sprite_lamp_01.jpg"),   size = 128 },
+    }
+    -- Skybox
+    SKYBOX_TEXTURES = {
+        { img = love.graphics.newImage("/textures/sky_night_01.jpg"), width = 512, height = 128 },
     }
     -- For limiting fps
     SLEEP = 0

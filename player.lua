@@ -21,35 +21,35 @@ local player = {
     update = function(self, map)
         -- Forwards and back
         if love.keyboard.isDown(self.keybinds.fward) then
-            if map.walls[math.floor(self.y)][math.floor(self.x + self.dir_x * self.move_speed)][1] == 0 then
+            if not map.walls[math.floor(self.y)][math.floor(self.x + self.dir_x * self.move_speed)][3] then
                 self.x = self.x + self.dir_x * self.move_speed
             end
-            if map.walls[math.floor(self.y + self.dir_y * self.move_speed)][math.floor(self.x)][1] == 0 then
+            if not map.walls[math.floor(self.y + self.dir_y * self.move_speed)][math.floor(self.x)][3] then
                 self.y = self.y + self.dir_y * self.move_speed
             end
         end
         if love.keyboard.isDown(self.keybinds.bward) then
-            if map.walls[math.floor(self.y)][math.floor(self.x - self.dir_x * self.move_speed)][1] == 0 then
+            if not map.walls[math.floor(self.y)][math.floor(self.x - self.dir_x * self.move_speed)][3] then
                 self.x = self.x - self.dir_x * self.move_speed
             end
-            if map.walls[math.floor(self.y - self.dir_y * self.move_speed)][math.floor(self.x)][1] == 0 then
+            if not map.walls[math.floor(self.y - self.dir_y * self.move_speed)][math.floor(self.x)][3] then
                 self.y = self.y - self.dir_y * self.move_speed
             end
         end
         -- Left and right
         if love.keyboard.isDown(self.keybinds.strafe_l) then
-            if map.walls[math.floor(self.y)][math.floor(self.x - self.plane_x * self.move_speed)][1] == 0 then
+            if not map.walls[math.floor(self.y)][math.floor(self.x - self.plane_x * self.move_speed)][3] then
                 self.x = self.x - self.plane_x * (self.move_speed / 2)
             end
-            if map.walls[math.floor(self.y - self.plane_y * self.move_speed)][math.floor(self.x)][1] == 0 then
+            if not map.walls[math.floor(self.y - self.plane_y * self.move_speed)][math.floor(self.x)][3] then
                 self.y = self.y - self.plane_y * (self.move_speed / 2)
             end
         end
         if love.keyboard.isDown(self.keybinds.strafe_r) then
-            if map.walls[math.floor(self.y)][math.floor(self.x + self.plane_x * self.move_speed)][1] == 0 then
+            if not map.walls[math.floor(self.y)][math.floor(self.x + self.plane_x * self.move_speed)][3] then
                 self.x = self.x + self.plane_x * (self.move_speed / 2)
             end
-            if map.walls[math.floor(self.y + self.plane_y * self.move_speed)][math.floor(self.x)][1] == 0 then
+            if not map.walls[math.floor(self.y + self.plane_y * self.move_speed)][math.floor(self.x)][3] then
                 self.y = self.y + self.plane_y * (self.move_speed / 2)
             end
         end

@@ -18,7 +18,7 @@ function love.load()
     WALL_TEXTURES = { -- {texture,size}
         { img = love.graphics.newImage("/textures/wall_brick_01.jpg"),   size = 128 },
         { img = love.graphics.newImage("/textures/wall_brick_02.jpg"),   size = 128 },
-        { img = love.graphics.newImage("/textures/wall_brick_03.jpg"),   size = 128 },
+        { img = love.graphics.newImage("/textures/wall_brick_04.png"),   size = 128 },
         { img = love.graphics.newImage("/textures/wall_magic_01.jpg"),   size = 128 },
         { img = love.graphics.newImage("/textures/wall_magic_02.jpg"),   size = 128 },
         { img = love.graphics.newImage("/textures/wall_metal_01.jpg"),   size = 128 },

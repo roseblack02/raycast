@@ -1,4 +1,5 @@
 local player = require("player")
+local raycaster = require("raycast")
 local map = require("map")
 local objects = require("objects")
 local tick = require("tick")
@@ -97,7 +98,7 @@ function love.draw()
     -- Make sure everything is scaled to current resolution
     love.graphics.scale(SCALE.x, SCALE.y)
 
-    map:raycasting(player, OBJ)
+    raycaster:raycasting(player, OBJ, map)
 
     love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 10)
 end

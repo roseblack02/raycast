@@ -1,6 +1,6 @@
 local player = {
-    x = 13,
-    y = 13,
+    x = 9,
+    y = 4,
     dir_x = -1,
     dir_y = 0,
     plane_x = 0,

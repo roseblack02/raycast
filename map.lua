@@ -65,10 +65,10 @@ local map = {
     events = {
         -- Function that changes the texture of the tile to an opn door and disbales collision
         -- Takes the player object, and the target tiles coordinates
-        door_open = function(self, player, x, y)
-            self.walls[y][x][1] = self.walls[y][x][1] + 1
-            self.walls[y][x][3] = false
-            self.walls[y][x][4] = 0
+        function(map, player, x, y)
+            map.walls[y][x][1] = map.walls[y][x][1] + 1
+            map.walls[y][x][3] = false
+            map.walls[y][x][4] = 0 -- Remove the flag
         end
     }
 }

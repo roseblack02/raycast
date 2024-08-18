@@ -54,6 +54,15 @@ local raycaster = {
 
         -- Drawing skybox --
         local skybox_text = SKYBOX_TEXTURES[1]
+        local scaled_width = skybox_text.width * 1.5
+        local repeats = 4
+
+        local skybox_x = 0
+
+        print(skybox_x)
+
+
+        love.graphics.draw(skybox_text.img, skybox_x, 0, 0, 1.5, 1.5)
 
         -- Drawing the floor and ceiling --
         -- Create an image data buffer to store the pixel data
@@ -94,7 +103,7 @@ local raycaster = {
                         local ceiling_text = map.ceilings[cell_y][cell_x]
                         local floor_shading = 1 - (row_dist / (max_view_dist / 1.5))
 
-                        if y > 0 and y < SCREEN_HEIGHT - 1 then
+                        if y > 0 and y < SCREEN_HEIGHT then
                             if floor_text > 0 then
                                 local r, g, b = FLOOR_TEXTURES[floor_text].img:getPixel(tx, ty)
                                 r, g, b = r * floor_shading, g * floor_shading, b * floor_shading
@@ -104,7 +113,7 @@ local raycaster = {
                             if ceiling_text > 0 then
                                 local r, g, b = FLOOR_TEXTURES[ceiling_text].img:getPixel(tx, ty)
                                 r, g, b = r * floor_shading, g * floor_shading, b * floor_shading
-                                pixel_buffer:setPixel(x, SCREEN_HEIGHT - y, r, g, b)
+                                pixel_buffer:setPixel(x, SCREEN_HEIGHT - y - 1, r, g, b)
                             end
                         end
                     end
@@ -119,7 +128,7 @@ local raycaster = {
         love.graphics.draw(final_frame)
 
         -- Drawing walls --
-        for x = 0, SCREEN_WIDTH - 1, 1 do
+        for x = 0, SCREEN_WIDTH - 1 do
             -- Get direction
             local cam_x = 2 * x / SCREEN_WIDTH - 1
             local ray_dir_x = player.dir_x + player.plane_x * cam_x
@@ -238,8 +247,8 @@ local raycaster = {
             end
 
             -- Calculate the height of the wall slice
-            local line_height = math.floor(SCREEN_HEIGHT / perp_wall_dist)
-            local draw_start = -line_height / 2 + SCREEN_HEIGHT / 2
+            local line_height = math.floor(SCREEN_HEIGHT / perp_wall_dist) + 1
+            local draw_start = (-line_height / 2 + SCREEN_HEIGHT / 2)
             local draw_end = line_height / 2 + SCREEN_HEIGHT / 2
 
             -- Calculate shading based on distance
@@ -272,6 +281,11 @@ local raycaster = {
                 love.graphics.setColor(shading, shading, shading)
                 love.graphics.draw(wall_texture.img, quad, x, draw_start, 0, 1, scaling)
                 love.graphics.setColor(1, 1, 1)
+
+                -- Draw upper layer walls
+                -- love.graphics.setColor(shading, shading, shading)
+                -- love.graphics.draw(wall_texture.img, quad, x, draw_start - line_height, 0, 1, scaling)
+                -- love.graphics.setColor(1, 1, 1)
             end
 
             -- Store distance of every wall hit in the Z buffer

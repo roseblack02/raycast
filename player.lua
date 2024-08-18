@@ -1,7 +1,7 @@
 local player = {
     x = 5,
     y = 10,
-    dir_x = -1,
+    dir_x = 1,
     dir_y = 0,
     plane_x = 0,
     plane_y = 0.66,
@@ -58,15 +58,6 @@ local player = {
         -- Look left and right
         if love.keyboard.isDown(self.keybinds.look_l) then
             local old_dir_x = self.dir_x
-            self.dir_x = self.dir_x * math.cos(self.cam_speed) - self.dir_y * math.sin(self.cam_speed)
-            self.dir_y = old_dir_x * math.sin(self.cam_speed) + self.dir_y * math.cos(self.cam_speed)
-
-            local old_plane_x = self.plane_x
-            self.plane_x = self.plane_x * math.cos(self.cam_speed) - self.plane_y * math.sin(self.cam_speed)
-            self.plane_y = old_plane_x * math.sin(self.cam_speed) + self.plane_y * math.cos(self.cam_speed)
-        end
-        if love.keyboard.isDown(self.keybinds.look_r) then
-            local old_dir_x = self.dir_x
             self.dir_x = self.dir_x * math.cos(-self.cam_speed) - self.dir_y * math.sin(-self.cam_speed)
             self.dir_y = old_dir_x * math.sin(-self.cam_speed) + self.dir_y * math.cos(-self.cam_speed)
 
@@ -74,19 +65,27 @@ local player = {
             self.plane_x = self.plane_x * math.cos(-self.cam_speed) - self.plane_y * math.sin(-self.cam_speed)
             self.plane_y = old_plane_x * math.sin(-self.cam_speed) + self.plane_y * math.cos(-self.cam_speed)
         end
+        if love.keyboard.isDown(self.keybinds.look_r) then
+            local old_dir_x = self.dir_x
+            self.dir_x = self.dir_x * math.cos(self.cam_speed) - self.dir_y * math.sin(self.cam_speed)
+            self.dir_y = old_dir_x * math.sin(self.cam_speed) + self.dir_y * math.cos(self.cam_speed)
+
+            local old_plane_x = self.plane_x
+            self.plane_x = self.plane_x * math.cos(self.cam_speed) - self.plane_y * math.sin(self.cam_speed)
+            self.plane_y = old_plane_x * math.sin(self.cam_speed) + self.plane_y * math.cos(self.cam_speed)
+        end
 
         -- Interact
         if love.keyboard.isDown(self.keybinds.interact) then
             -- Get tile data
             local tile, x, y = self:check_tile(map)
 
-            print(tile)
-
             -- Check for an event flag
             local flag = tile[4]
             if flag > 0 then
+                -- Grab event using the flag and call it
                 local fn = map.events[tile[4]]
-                fn(self, x, y)
+                fn(map, self, x, y)
             end
         end
     end,

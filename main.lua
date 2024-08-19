@@ -5,7 +5,7 @@ local objects = require("objects")
 local tick = require("tick")
 
 function love.load()
-    -- Setting window size
+    -- Window settings
     SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
     love.window.setMode(SCREEN_WIDTH, SCREEN_HEIGHT, {
         vsync = 1,
@@ -58,12 +58,10 @@ function love.load()
         { img = love.image.newImageData("/textures/floors/floor_tile_02.png"),     size = 128 },
         { img = love.image.newImageData("/textures/floors/floor_wood_01.png"),     size = 128 },
     }
-    -- Sprites
     SPRITE_TEXTURES = {
         { img = love.graphics.newImage("/textures/sprites/sprite_barrel_01.png"), size = 128 },
         { img = love.graphics.newImage("/textures/sprites/sprite_lamp_01.png"),   size = 128 },
     }
-    -- Skybox
     SKYBOX_TEXTURES = {
         { img = love.graphics.newImage("/textures/skybox/sky_night_01.png"), width = 512, height = 128 },
     }
@@ -72,9 +70,10 @@ function love.load()
 
     -- Game objects
     OBJ = {}
-    table.insert(OBJ, objects:create_obj("barrel", 2, 2, 1))
-    table.insert(OBJ, objects:create_obj("barrel", 3, 2, 1))
-    table.insert(OBJ, objects:create_obj("barrel", 4.5, 2, 1))
+    -- name, y, x, texture
+    table.insert(OBJ, objects:create_obj("barrel", 2, 15, 1))
+    table.insert(OBJ, objects:create_obj("barrel", 3, 15, 1))
+    table.insert(OBJ, objects:create_obj("barrel", 4.5, 15, 1))
     table.insert(OBJ, objects:create_obj("lamp_post", 15, 3, 2))
     table.insert(OBJ, objects:create_obj("lamp_post", 11, 8, 2))
     table.insert(OBJ, objects:create_obj("lamp_post", 15, 14, 2))

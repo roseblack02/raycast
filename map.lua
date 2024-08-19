@@ -1,6 +1,9 @@
 local map = {
     width = 16,
     height = 16,
+    skybox = true,
+    max_view_dist = 8,
+    fog_colour = { 0.8, 0.5, 0.7 },
     -- Wall types:
     -- 0 normal cube wall
     -- 1 sw/ne facing diagonal
@@ -63,12 +66,11 @@ local map = {
         { 0, 0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0,  0,  0,  0, }
     },
     events = {
-        -- Function that changes the texture of the tile to an opn door and disbales collision
-        -- Takes the player object, and the target tiles coordinates
+        -- Opens doors by changing the texture and disabling collision
         function(map, player, x, y)
-            map.walls[y][x][1] = map.walls[y][x][1] + 1
+            map.walls[y][x][1] = map.walls[y][x][1] + 1 -- Open door texture will always be 1 ahead of the closed door
             map.walls[y][x][3] = false
-            map.walls[y][x][4] = 0 -- Remove the flag
+            map.walls[y][x][4] = 0                      -- Remove the flag
         end
     }
 }

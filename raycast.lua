@@ -317,10 +317,10 @@ local raycaster = {
 
                 local inv_det = 1 / (player.plane_x * player.dir_y - player.dir_x * player.plane_y)
 
-                local transofrm_x = inv_det * (player.dir_y * sprite_x - player.dir_x * sprite_y)
+                local transform_x = inv_det * (player.dir_y * sprite_x - player.dir_x * sprite_y)
                 local transform_y = inv_det * (-player.plane_y * sprite_x + player.plane_x * sprite_y)
 
-                local sprite_screen_x = math.floor((SCREEN_WIDTH / 2) * (1 + transofrm_x / transform_y))
+                local sprite_screen_x = math.floor((SCREEN_WIDTH / 2) * (1 + transform_x / transform_y))
 
                 -- Line height
                 local sprite_height = math.abs(math.floor(SCREEN_HEIGHT / (transform_y)))
@@ -335,8 +335,11 @@ local raycaster = {
                 if draw_start_x < 0 then draw_start_x = 0 end
                 local draw_end_x = sprite_width / 2 + sprite_screen_x
                 if draw_end_x >= SCREEN_WIDTH then draw_end_x = SCREEN_WIDTH - 1 end
-
                 local tex_num = sprite_objs[spr].texture
+
+                -- Calculate shading based on distance
+                local shading = 1.5 - (dist / (map.max_view_dist / 1.5))
+
                 for stripe = draw_start_x, draw_end_x do
                     -- Check if the sprite  should be visible before drawing
                     if stripe > 0 and stripe < SCREEN_WIDTH
@@ -349,7 +352,7 @@ local raycaster = {
                         local scaling = (draw_end_y - draw_start_y) / texture_size
                         local quad = love.graphics.newQuad(tex_x, 0, 1, texture_size, texture_size, texture_size)
 
-                        love.graphics.setColor(0, 0, 0)
+                        love.graphics.setColor(shading, shading, shading)
                         love.graphics.draw(sprite_texture.img, quad, stripe, draw_start_x, 0, 1, scaling)
                         love.graphics.setColor(1, 1, 1)
                     end

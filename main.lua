@@ -71,12 +71,9 @@ function love.load()
     -- Game objects
     OBJ = {}
     -- name, y, x, texture
-    table.insert(OBJ, objects:create_obj("barrel", 2, 15, 1))
-    table.insert(OBJ, objects:create_obj("barrel", 3, 15, 1))
-    table.insert(OBJ, objects:create_obj("barrel", 4.5, 15, 1))
-    table.insert(OBJ, objects:create_obj("lamp_post", 15, 3, 2))
-    table.insert(OBJ, objects:create_obj("lamp_post", 11, 8, 2))
-    table.insert(OBJ, objects:create_obj("lamp_post", 15, 14, 2))
+    table.insert(OBJ, objects:create_obj("barrel", 2.7, 3.1, 1))
+    table.insert(OBJ, objects:create_obj("barrel", 2, 4.5, 1))
+    table.insert(OBJ, objects:create_obj("barrel", 2.1, 5, 1))
 end
 
 function love.update(dt)

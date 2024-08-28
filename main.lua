@@ -70,10 +70,10 @@ function love.load()
 
     -- Game objects
     OBJ = {}
-    -- name, y, x, texture
-    table.insert(OBJ, objects:create_obj("barrel", 2.7, 3.1, 1))
-    table.insert(OBJ, objects:create_obj("barrel", 2, 4.5, 1))
-    table.insert(OBJ, objects:create_obj("barrel", 2.1, 5, 1))
+    -- name, y, x, texture, distance
+    table.insert(OBJ, objects:create_obj("barrel", 2.5, 3.1, 1))
+    table.insert(OBJ, objects:create_obj("barrel", 2.7, 4.5, 1))
+    table.insert(OBJ, objects:create_obj("barrel", 2.5, 5, 1))
 end
 
 function love.update(dt)

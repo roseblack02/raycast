@@ -4,12 +4,14 @@ local objects = {
     -- x,y is coords of where it will spawn
     -- texture is the position of the texture in the sprite texture table
     -- props is a table of any additional properties
+    -- distance will be used when sorting sprites
     create_obj = function(self, name, y, x, texture, props)
         local obj = {
             name = name,
             x = x,
             y = y,
             texture = texture,
+            distance = 0,
             update = function(self)
             end,
             draw = function(self)

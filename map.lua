@@ -3,6 +3,7 @@ local map = {
     height = 16,
     skybox = true,
     max_view_dist = 8,
+    max_spr_dist = 20,
     fog_colour = { 0.8, 0.5, 0.7 },
     -- Wall types:
     -- 0 normal cube wall

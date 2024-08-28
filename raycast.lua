@@ -1,28 +1,5 @@
 local raycaster = {
     z_buffer = {},
-    -- Sorting game objects by distance from player
-    -- order is a table with the order the sprites were initialised in
-    -- dist is the distance of each sprite
-    -- amount is the number of sprites
-    sort_objs = function(self, order, dist, amount)
-        local objs = {}
-
-        for i = 1, amount do
-            local tbl = {}
-            table.insert(tbl, dist[i])
-            table.insert(tbl, order[i])
-
-            table.insert(objs, tbl)
-        end
-
-        -- sort from shortest dist to highest dist
-        table.sort(objs, function(tbl1, tbl2)
-            return tbl1[1] < tbl2[1]
-        end)
-
-        return objs
-    end,
-
     -- For diagonal walls
     wall_intersect = function(self, wall_x0, wall_y0, wall_x1, wall_y1, player_x, player_y, dir_x, dir_y)
         local i = { tr = -1, tw = -1 }
@@ -301,12 +278,22 @@ local raycaster = {
             self.z_buffer[x] = perp_wall_dist
         end
 
+        -- Get distance from player for each object
+        for i = 1, #sprite_objs do
+            sprite_objs[i].distance = ((player.x - sprite_objs[i].x) ^ 2) + ((player.y - sprite_objs[i].y) ^ 2)
+        end
+
+        -- Need to sort sprites by distance in reverse so they are drawn in the correct order
+        local function sort_spr(a, b)
+            return a.distance > b.distance
+        end
+        table.sort(sprite_objs, sort_spr)
+
         -- Sprite casting --
         for spr = 1, #sprite_objs do
-            local dist = ((player.x - sprite_objs[spr].x) ^ 2) + ((player.y - sprite_objs[spr].y) ^ 2)
             -- Only draw sprite if the distance is with the max view distance
-            if dist < map.max_view_dist then
-                -- Get position
+            if sprite_objs[spr].distance < map.max_spr_dist then
+                -- Get x position relative to the player
                 local sprite_x = sprite_objs[spr].x - player.x
                 local sprite_y = sprite_objs[spr].y - player.y
 
@@ -316,29 +303,26 @@ local raycaster = {
                 -- [ plane_y   dir_y ]                                          [ -plane_y  plane_x ]
 
                 local inv_det = 1 / (player.plane_x * player.dir_y - player.dir_x * player.plane_y)
-
                 local transform_x = inv_det * (player.dir_y * sprite_x - player.dir_x * sprite_y)
                 local transform_y = inv_det * (-player.plane_y * sprite_x + player.plane_x * sprite_y)
+
 
                 local sprite_screen_x = math.floor((SCREEN_WIDTH / 2) * (1 + transform_x / transform_y))
 
                 -- Line height
                 local sprite_height = math.abs(math.floor(SCREEN_HEIGHT / (transform_y)))
                 local draw_start_y = -sprite_height / 2 + SCREEN_HEIGHT / 2
-                if draw_start_y < 0 then draw_start_y = 0 end
                 local draw_end_y = sprite_height / 2 + SCREEN_HEIGHT / 2
-                if draw_end_y >= SCREEN_HEIGHT then draw_end_y = SCREEN_HEIGHT - 1 end
 
                 -- Texture width
-                local sprite_width = math.abs(math.floor(SCREEN_HEIGHT / (transform_y)))
+                local sprite_width = math.abs(math.floor(SCREEN_WIDTH / (transform_y)))
+                if sprite_width > sprite_height then sprite_width = sprite_height end
                 local draw_start_x = -sprite_width / 2 + sprite_screen_x
-                if draw_start_x < 0 then draw_start_x = 0 end
                 local draw_end_x = sprite_width / 2 + sprite_screen_x
-                if draw_end_x >= SCREEN_WIDTH then draw_end_x = SCREEN_WIDTH - 1 end
-                local tex_num = sprite_objs[spr].texture
 
                 -- Calculate shading based on distance
-                local shading = 1.5 - (dist / (map.max_view_dist / 1.5))
+                local shading = 2.5 - (sprite_objs[spr].distance / (map.max_view_dist))
+                local tex_num = sprite_objs[spr].texture
 
                 for stripe = draw_start_x, draw_end_x do
                     -- Check if the sprite  should be visible before drawing
@@ -353,7 +337,7 @@ local raycaster = {
                         local quad = love.graphics.newQuad(tex_x, 0, 1, texture_size, texture_size, texture_size)
 
                         love.graphics.setColor(shading, shading, shading)
-                        love.graphics.draw(sprite_texture.img, quad, stripe, draw_start_x, 0, 1, scaling)
+                        love.graphics.draw(sprite_texture.img, quad, stripe, draw_start_y, 0, 1, scaling)
                         love.graphics.setColor(1, 1, 1)
                     end
                 end

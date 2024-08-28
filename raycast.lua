@@ -18,103 +18,99 @@ local raycaster = {
     -- Initialise the z buffer to be a table with the screens width
     init_z_buffer = function(self)
         for i = 0, SCREEN_WIDTH do
-            table.insert(self.z_buffer, 0)
+            table.insert(self.z_buffer, 9999)
         end
     end,
 
-    -- Function to draw the walls, floors, ceilings, and object sprites on the screen
-    -- sprite_objs is the table of game objects
-    raycasting = function(self, player, sprite_objs, map)
-        local texture_size = 128 -- Size of textures but should be using texture.size idealy
+    -- Draw sprites using the table of sprite objects
+    draw_sprites = function(self, player, sprite_objs, map, texture_size)
+        local half_screen_width = SCREEN_WIDTH / 2
+        local half_screen_height = SCREEN_HEIGHT / 2
 
-        -- Drawing skybox --
-        if map.skybox then
-            local skybox_tex = SKYBOX_TEXTURES[1]
-            local scale = 2
-            local scaled_width = skybox_tex.width * scale
-
-            -- Get player angle
-            local radians = math.atan2(player.dir_y, player.dir_x)
-            local degrees = math.deg(radians)
-            -- Adjust to 0-360 degree range
-            if degrees < 0 then
-                degrees = degrees + 360
-            end
-
-            -- Make image wrap around the screen
-            local skybox_x = -((degrees / 360) * scaled_width)
-
-            for i = 0, 2 do
-                love.graphics.draw(skybox_tex.img, skybox_x + (scaled_width * i), 0,
-                    0, scale, scale)
-            end
+        -- Get distance from player for each object and sort
+        for i = 1, #sprite_objs do
+            sprite_objs[i].distance = ((player.x - sprite_objs[i].x) ^ 2) + ((player.y - sprite_objs[i].y) ^ 2)
         end
+        table.sort(sprite_objs, function(a, b) return a.distance > b.distance end)
 
-        -- Drawing the floor and ceiling --
-        -- Create an image data to store the pixel data
-        local pixel_buffer = love.image.newImageData(800, 600)
+        -- Sprite casting --
+        for spr = 1, #sprite_objs do
+            -- Only draw sprite if the distance is with the max view distance
+            if sprite_objs[spr].distance < map.max_spr_dist then
+                -- Get x position relative to the player
+                local sprite_x = sprite_objs[spr].x - player.x
+                local sprite_y = sprite_objs[spr].y - player.y
 
-        local starting_point = SCREEN_HEIGHT / 2
-        for y = starting_point, SCREEN_HEIGHT - 1 do
-            local p = y - SCREEN_HEIGHT / 2
-            local pos_z = 0.5 * SCREEN_HEIGHT
-            local row_dist = pos_z / (p ~= 0 and p or 1) -- Avoid division by zero
+                -- Transform sprite with the inverse camera matrix
+                local inv_det = 1 / (player.plane_x * player.dir_y - player.dir_x * player.plane_y)
+                local transform_x = inv_det * (player.dir_y * sprite_x - player.dir_x * sprite_y)
+                local transform_y = inv_det * (-player.plane_y * sprite_x + player.plane_x * sprite_y)
 
-            local floor_step_x = row_dist * (player.dir_x + player.plane_x -
-                (player.dir_x - player.plane_x)) / SCREEN_WIDTH
-            local floor_step_y = row_dist * (player.dir_y + player.plane_y -
-                (player.dir_y - player.plane_y)) / SCREEN_WIDTH
-            local floor_x = player.x + row_dist * (player.dir_x - player.plane_x)
-            local floor_y = player.y + row_dist * (player.dir_y - player.plane_y)
+                local sprite_screen_x = math.floor((half_screen_width) * (1 + transform_x / transform_y))
 
-            if row_dist < map.max_view_dist then
-                for x = 0, SCREEN_WIDTH - 1 do
-                    local cell_x = math.floor(floor_x)
-                    local cell_y = math.floor(floor_y)
+                -- Line height
+                local sprite_height = math.abs(math.floor(SCREEN_HEIGHT / (transform_y)))
+                local draw_start_y = -sprite_height / 2 + half_screen_height
+                local draw_end_y = sprite_height / 2 + half_screen_height
 
-                    local tx = math.floor(texture_size * (floor_x - cell_x)) % texture_size
-                    local ty = math.floor(texture_size * (floor_y - cell_y)) % texture_size
+                -- Texture width
+                local sprite_width = math.abs(math.floor(SCREEN_WIDTH / (transform_y)))
+                if sprite_width > sprite_height then sprite_width = sprite_height end
+                local draw_start_x = -sprite_width / 2 + sprite_screen_x
+                local draw_end_x = sprite_width / 2 + sprite_screen_x
 
-                    -- Ensure tx and ty are within valid range
-                    tx = math.max(0, math.min(tx, texture_size - 1))
-                    ty = math.max(0, math.min(ty, texture_size - 1))
+                -- Calculate shading based on distance
+                local shading = 1 - (transform_y / (map.max_view_dist / 1.5))
+                local tex_num = sprite_objs[spr].texture
 
-                    -- Get texture from respective tables
-                    local cell_x = math.abs(math.floor(floor_x))
-                    local cell_y = math.abs(math.floor(floor_y))
+                for stripe = draw_start_x, draw_end_x do
+                    -- Check if the sprite  should be visible before drawing
+                    if stripe > 0 and stripe < SCREEN_WIDTH
+                        and transform_y < (self.z_buffer[stripe] or math.huge) and transform_y > 0 then
+                        -- if self.z_buffer[stripe] then
+                        --     print("transform y: " .. transform_y .. " zbuffer: " .. self.z_buffer[stripe])
+                        -- end
 
-                    if cell_x > 0 and cell_x < map.width
-                        and cell_y > 0 and cell_y < map.height then
-                        local floor_tex = map.floors[cell_y][cell_x]
-                        local ceiling_tex = map.ceilings[cell_y][cell_x]
+                        -- NOTE 256 might just be texture_size * 4
+                        local tex_x = math.floor(256 * (stripe - (-sprite_width / 2 + sprite_screen_x))
+                            * texture_size / sprite_width) / 256
 
-                        local shading = 1 - (row_dist / (map.max_view_dist / 1.5))
+                        local sprite_texture = SPRITE_TEXTURES[tex_num]
+                        local scaling = (draw_end_y - draw_start_y) / texture_size
+                        local quad = love.graphics.newQuad(tex_x, 0, 1, texture_size, texture_size, texture_size)
 
-                        if y > 0 and y < SCREEN_HEIGHT then
-                            if floor_tex > 0 then
-                                local r, g, b = FLOOR_TEXTURES[floor_tex].img:getPixel(tx, ty)
-                                r, g, b = r * shading, g * shading, b * shading
-                                pixel_buffer:setPixel(x, y, r, g, b)
-                            end
-
-                            if ceiling_tex > 0 then
-                                local r, g, b = FLOOR_TEXTURES[ceiling_tex].img:getPixel(tx, ty)
-                                r, g, b = r * shading, g * shading, b * shading
-                                pixel_buffer:setPixel(x, SCREEN_HEIGHT - y - 1, r, g, b)
-                            end
-                        end
+                        love.graphics.setColor(shading, shading, shading)
+                        love.graphics.draw(sprite_texture.img, quad, stripe, draw_start_y, 0, 1, scaling)
+                        love.graphics.setColor(1, 1, 1)
                     end
-                    floor_x = floor_x + floor_step_x
-                    floor_y = floor_y + floor_step_y
                 end
             end
         end
+    end,
+    -- Draw the skybox image and wrap it around the player
+    draw_skybox = function(self, player, map)
+        local skybox_tex = SKYBOX_TEXTURES[map.skybox_tex]
+        local scale = 2
+        local scaled_width = skybox_tex.width * scale
 
-        -- Drawing final image. This is just for floors and ceilings
-        local final_frame = love.graphics.newImage(pixel_buffer)
-        love.graphics.draw(final_frame)
+        -- Get player angle
+        local radians = math.atan2(player.dir_y, player.dir_x)
+        local degrees = math.deg(radians)
+        -- Adjust to 0-360 degree range
+        if degrees < 0 then
+            degrees = degrees + 360
+        end
 
-        -- Drawing walls --
+        -- Make image wrap around the screen
+        local skybox_x = -((degrees / 360) * scaled_width)
+
+        for i = 0, 2 do
+            love.graphics.draw(skybox_tex.img, skybox_x + (scaled_width * i), 0,
+                0, scale, scale)
+        end
+    end,
+    -- Draw walls based on the walls table in the map
+    draw_walls = function(self, player, map, texture_size)
         for x = 0, SCREEN_WIDTH - 1 do
             -- Get direction
             local cam_x = 2 * x / SCREEN_WIDTH - 1
@@ -232,10 +228,12 @@ local raycaster = {
                 end
             end
 
+            local half_screen_height = SCREEN_HEIGHT / 2
+
             -- Calculate the height of the wall slice
             local line_height = math.floor(SCREEN_HEIGHT / perp_wall_dist) + 1
-            local draw_start = (-line_height / 2 + SCREEN_HEIGHT / 2)
-            local draw_end = line_height / 2 + SCREEN_HEIGHT / 2
+            local draw_start = (-line_height / 2 + half_screen_height)
+            local draw_end = line_height / 2 + half_screen_height
 
             -- Calculate shading based on distance
             local shading = 1 - (perp_wall_dist / (map.max_view_dist / 1.5))
@@ -273,76 +271,88 @@ local raycaster = {
                 -- love.graphics.draw(wall_texture.img, quad, x, draw_start - line_height, 0, 1, scaling)
                 -- love.graphics.setColor(1, 1, 1)
             end
-
             -- Store distance of every wall hit in the Z buffer
             self.z_buffer[x] = perp_wall_dist
         end
+    end,
+    --Draw floors and ceilings based on their respective tables in the map
+    draw_floors = function(self, player, map, texture_size)
+        local half_screen_height = SCREEN_HEIGHT / 2
 
-        -- Get distance from player for each object
-        for i = 1, #sprite_objs do
-            sprite_objs[i].distance = ((player.x - sprite_objs[i].x) ^ 2) + ((player.y - sprite_objs[i].y) ^ 2)
-        end
+        -- Create an image data to store the pixel data
+        local pixel_buffer = love.image.newImageData(800, 600)
 
-        -- Need to sort sprites by distance in reverse so they are drawn in the correct order
-        local function sort_spr(a, b)
-            return a.distance > b.distance
-        end
-        table.sort(sprite_objs, sort_spr)
+        local starting_point = half_screen_height
+        for y = starting_point, SCREEN_HEIGHT - 1 do
+            local p = y - half_screen_height
+            local pos_z = 0.5 * SCREEN_HEIGHT
+            local row_dist = pos_z / (p ~= 0 and p or 1) -- Avoid division by zero
 
-        -- Sprite casting --
-        for spr = 1, #sprite_objs do
-            -- Only draw sprite if the distance is with the max view distance
-            if sprite_objs[spr].distance < map.max_spr_dist then
-                -- Get x position relative to the player
-                local sprite_x = sprite_objs[spr].x - player.x
-                local sprite_y = sprite_objs[spr].y - player.y
+            local floor_step_x = row_dist * (player.dir_x + player.plane_x -
+                (player.dir_x - player.plane_x)) / SCREEN_WIDTH
+            local floor_step_y = row_dist * (player.dir_y + player.plane_y -
+                (player.dir_y - player.plane_y)) / SCREEN_WIDTH
+            local floor_x = player.x + row_dist * (player.dir_x - player.plane_x)
+            local floor_y = player.y + row_dist * (player.dir_y - player.plane_y)
 
-                -- Transform sprite with the inverse camera matrix
-                -- [ plane_x   dir_x ] -1                                       [ dir_y      -dir_x ]
-                -- [                 ]   =  1/(plane_x*dir_y-dir_x*plane_y) *   [                   ]
-                -- [ plane_y   dir_y ]                                          [ -plane_y  plane_x ]
+            if row_dist < map.max_view_dist then
+                for x = 0, SCREEN_WIDTH - 1 do
+                    local cell_x = math.floor(floor_x)
+                    local cell_y = math.floor(floor_y)
 
-                local inv_det = 1 / (player.plane_x * player.dir_y - player.dir_x * player.plane_y)
-                local transform_x = inv_det * (player.dir_y * sprite_x - player.dir_x * sprite_y)
-                local transform_y = inv_det * (-player.plane_y * sprite_x + player.plane_x * sprite_y)
+                    local tx = math.floor(texture_size * (floor_x - cell_x)) % texture_size
+                    local ty = math.floor(texture_size * (floor_y - cell_y)) % texture_size
 
+                    -- Ensure tx and ty are within valid range
+                    tx = math.max(0, math.min(tx, texture_size - 1))
+                    ty = math.max(0, math.min(ty, texture_size - 1))
 
-                local sprite_screen_x = math.floor((SCREEN_WIDTH / 2) * (1 + transform_x / transform_y))
+                    -- Get texture from respective tables
+                    local cell_x = math.abs(math.floor(floor_x))
+                    local cell_y = math.abs(math.floor(floor_y))
 
-                -- Line height
-                local sprite_height = math.abs(math.floor(SCREEN_HEIGHT / (transform_y)))
-                local draw_start_y = -sprite_height / 2 + SCREEN_HEIGHT / 2
-                local draw_end_y = sprite_height / 2 + SCREEN_HEIGHT / 2
+                    if cell_x > 0 and cell_x < map.width
+                        and cell_y > 0 and cell_y < map.height then
+                        local floor_tex = map.floors[cell_y][cell_x]
+                        local ceiling_tex = map.ceilings[cell_y][cell_x]
 
-                -- Texture width
-                local sprite_width = math.abs(math.floor(SCREEN_WIDTH / (transform_y)))
-                if sprite_width > sprite_height then sprite_width = sprite_height end
-                local draw_start_x = -sprite_width / 2 + sprite_screen_x
-                local draw_end_x = sprite_width / 2 + sprite_screen_x
+                        local shading = 1 - (row_dist / (map.max_view_dist / 1.5))
 
-                -- Calculate shading based on distance
-                local shading = 2.5 - (sprite_objs[spr].distance / (map.max_view_dist))
-                local tex_num = sprite_objs[spr].texture
+                        if y > 0 and y < SCREEN_HEIGHT then
+                            if floor_tex > 0 then
+                                local r, g, b = FLOOR_TEXTURES[floor_tex].img:getPixel(tx, ty)
+                                r, g, b = r * shading, g * shading, b * shading
+                                pixel_buffer:setPixel(x, y, r, g, b)
+                            end
 
-                for stripe = draw_start_x, draw_end_x do
-                    -- Check if the sprite  should be visible before drawing
-                    if stripe > 0 and stripe < SCREEN_WIDTH
-                        and transform_y < (self.z_buffer[stripe] or math.huge) and transform_y > 0 then
-                        -- NOTE 256 might just be texture_size * 4
-                        local tex_x = math.floor(256 * (stripe - (-sprite_width / 2 + sprite_screen_x))
-                            * texture_size / sprite_width) / 256
-
-                        local sprite_texture = SPRITE_TEXTURES[tex_num]
-                        local scaling = (draw_end_y - draw_start_y) / texture_size
-                        local quad = love.graphics.newQuad(tex_x, 0, 1, texture_size, texture_size, texture_size)
-
-                        love.graphics.setColor(shading, shading, shading)
-                        love.graphics.draw(sprite_texture.img, quad, stripe, draw_start_y, 0, 1, scaling)
-                        love.graphics.setColor(1, 1, 1)
+                            if ceiling_tex > 0 then
+                                local r, g, b = FLOOR_TEXTURES[ceiling_tex].img:getPixel(tx, ty)
+                                r, g, b = r * shading, g * shading, b * shading
+                                pixel_buffer:setPixel(x, SCREEN_HEIGHT - y - 1, r, g, b)
+                            end
+                        end
                     end
+                    floor_x = floor_x + floor_step_x
+                    floor_y = floor_y + floor_step_y
                 end
             end
         end
+
+        -- Drawing final image. This is just for floors and ceilings
+        local final_frame = love.graphics.newImage(pixel_buffer)
+        love.graphics.draw(final_frame)
+    end,
+
+    -- Render everything to the screen
+    raycasting = function(self, player, sprite_objs, map)
+        local texture_size = 128 -- Size of textures but should be using texture.size idealy
+
+        if map.skybox then
+            self:draw_skybox(player, map)
+        end
+        self:draw_floors(player, map, texture_size)
+        self:draw_walls(player, map, texture_size)
+        self:draw_sprites(player, sprite_objs, map, texture_size)
     end
 }
 

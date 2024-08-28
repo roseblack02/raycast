@@ -70,10 +70,13 @@ function love.load()
 
     -- Game objects
     OBJ = {}
-    -- name, y, x, texture, distance
+    -- name, y, x, texture
     table.insert(OBJ, objects:create_obj("barrel", 2.5, 3.1, 1))
     table.insert(OBJ, objects:create_obj("barrel", 2.7, 4.5, 1))
     table.insert(OBJ, objects:create_obj("barrel", 2.5, 5, 1))
+    table.insert(OBJ, objects:create_obj("lamp_post", 8, 8.5, 2))
+
+    raycaster:init_z_buffer()
 end
 
 function love.update(dt)

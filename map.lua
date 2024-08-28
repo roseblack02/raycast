@@ -2,6 +2,7 @@ local map = {
     width = 16,
     height = 16,
     skybox = true,
+    skybox_tex = 1,
     max_view_dist = 8,
     max_spr_dist = 20,
     fog_colour = { 0.8, 0.5, 0.7 },

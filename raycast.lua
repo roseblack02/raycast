@@ -311,12 +311,12 @@ local raycaster = {
 
                 -- Line height
                 local sprite_height = math.abs(math.floor(screen_height / (transform_y)))
-                local draw_start_y = -sprite_height / 2 + half_screen_height
+                local draw_start_y = (-sprite_height / 2 + half_screen_height) -
+                    ((sprite_height / 2) * (sprite_objs[spr].y_scaling / 2))
                 local draw_end_y = sprite_height / 2 + half_screen_height
 
                 -- Texture width
-                local sprite_width = math.abs(math.floor(screen_width / (transform_y)))
-                if sprite_width > sprite_height then sprite_width = sprite_height end
+                local sprite_width = math.abs(math.floor(screen_width / (transform_y))) * sprite_objs[spr].x_scaling
                 local draw_start_x = math.floor(-sprite_width / 2 + sprite_screen_x)
                 local draw_end_x = math.floor(sprite_width / 2 + sprite_screen_x)
 

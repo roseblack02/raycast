@@ -70,13 +70,13 @@ function love.load()
 
     -- Game objects
     OBJ = {}
-    -- name, y, x, texture, scaling factor
-    table.insert(OBJ, objects:create_obj("barrel", 5, 5, 1, 0.5))
-    table.insert(OBJ, objects:create_obj("barrel", 2.5, 3.1, 1, 0.5))
-    table.insert(OBJ, objects:create_obj("barrel", 2.7, 4.5, 1, 1))
-    table.insert(OBJ, objects:create_obj("barrel", 2.5, 5, 1, 0.5))
-    table.insert(OBJ, objects:create_obj("lamp_post", 8, 8.5, 2, 2))
-    table.insert(OBJ, objects:create_obj("lamp_post", 11.5, 6, 2, 2))
+    -- name, y, x, texture, x scaling factor, y scaling factor, table of extra properties
+    table.insert(OBJ, objects:create_obj("barrel", 5, 5, 1, 0.5, 0.5))
+    table.insert(OBJ, objects:create_obj("barrel", 2.5, 3.1, 1, 0.5, 0.5))
+    table.insert(OBJ, objects:create_obj("barrel", 2.7, 4.5, 1, 1, 1))
+    table.insert(OBJ, objects:create_obj("barrel", 2.5, 5, 1, 0.5, 0.5))
+    table.insert(OBJ, objects:create_obj("lamp_post", 8, 8.5, 2, 1, 2))
+    table.insert(OBJ, objects:create_obj("lamp_post", 11.5, 6, 2, 1, 2))
 end
 
 function love.update(dt)

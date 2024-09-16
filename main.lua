@@ -70,13 +70,13 @@ function love.load()
 
     -- Game objects
     OBJ = {}
-    -- name, y, x, texture
-    table.insert(OBJ, objects:create_obj("barrel", 2.5, 3.1, 1))
-    table.insert(OBJ, objects:create_obj("barrel", 2.7, 4.5, 1))
-    table.insert(OBJ, objects:create_obj("barrel", 2.5, 5, 1))
-    table.insert(OBJ, objects:create_obj("lamp_post", 8, 8.5, 2))
-
-    raycaster:init_z_buffer()
+    -- name, y, x, texture, scaling factor
+    table.insert(OBJ, objects:create_obj("barrel", 5, 5, 1, 0.5))
+    table.insert(OBJ, objects:create_obj("barrel", 2.5, 3.1, 1, 0.5))
+    table.insert(OBJ, objects:create_obj("barrel", 2.7, 4.5, 1, 1))
+    table.insert(OBJ, objects:create_obj("barrel", 2.5, 5, 1, 0.5))
+    table.insert(OBJ, objects:create_obj("lamp_post", 8, 8.5, 2, 2))
+    table.insert(OBJ, objects:create_obj("lamp_post", 11.5, 6, 2, 2))
 end
 
 function love.update(dt)
@@ -97,7 +97,7 @@ function love.draw()
     -- Make sure everything is scaled to current resolution
     love.graphics.scale(SCALE.x, SCALE.y)
 
-    raycaster:raycasting(player, OBJ, map)
+    raycaster:raycasting(player, OBJ, map, SCREEN_WIDTH, SCREEN_HEIGHT)
 
     love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 10)
 end

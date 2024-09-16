@@ -1,8 +1,8 @@
+--TODO:
+-- Add a scaling factor to objs and use that to scale sprites in the raycasting code
+
 local objects = {
     -- Creates an object then inserts it into the table passed in
-    -- name is the strign name of the object
-    -- x,y is coords of where it will spawn
-    -- texture is the position of the texture in the sprite texture table
     -- props is a table of any additional properties
     -- distance will be used when sorting sprites
     create_obj = function(self, name, y, x, texture, props)

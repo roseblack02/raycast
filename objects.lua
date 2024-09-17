@@ -1,6 +1,3 @@
---TODO:
--- Add a scaling factor to objs and use that to scale sprites in the raycasting code
-
 local objects = {
     -- Creates an object then inserts it into the table passed in
     -----------------------------
@@ -11,7 +8,7 @@ local objects = {
     ---@param x_scaling number,
     ---@param y_scaling number,
     ---@param props table,
-    ---@return obj table
+    ---@return table obj
     create_obj = function(self, name, y, x, texture, x_scaling, y_scaling, props)
         local obj = {
             name = name,

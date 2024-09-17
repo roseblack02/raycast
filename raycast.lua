@@ -1,7 +1,5 @@
 -- TODO:
--- Fix the issue where the corners of the tiles around the doors are not drawn (may need to seperate door/flatwall drawing code)
 -- Variable height walls would be really nice
--- Add a scaling factor to objs and use that to scale sprites
 
 -- Module for raycasting and rendering the map plus objects/sprites to the screen
 local Raycaster = {
@@ -15,7 +13,7 @@ local Raycaster = {
     ---@param player_y number,
     ---@param dir_x number,
     ---@param dir_y number,
-    ---@return i number
+    ---@return number i
     wall_intersect = function(self, wall_x0, wall_y0, wall_x1, wall_y1, player_x, player_y, dir_x, dir_y)
         local i = { tr = -1, tw = -1 }                      -- Intersection results: tr = ray distance, tw = wall intersection point
         local m = (wall_y1 - wall_y0) / (wall_x1 - wall_x0) -- Slope
@@ -65,7 +63,7 @@ local Raycaster = {
     ---@param texture_size number,
     ---@param screen_width number,
     ---@param screen_height number,
-    ---@return pixel_buffer imageData
+    ---@return imageData pixel_buffer
     draw_floors = function(self, Player, Map, pixel_buffer, texture_size, screen_width, screen_height)
         local half_screen_height = screen_height / 2
         local pos_z = 0.5 * screen_height -- Reference distance for perspective projection
@@ -137,13 +135,15 @@ local Raycaster = {
     -- Draw walls based on the wall table in the Map and sets their distance in the z buffer
     -----------------------------
     ---@param z_buffer table,
+    ---@param transparent_walls table,
     ---@param Player table,
     ---@param Map table,
     ---@param texture_size number,
     ---@param screen_width number,
     ---@param screen_height number,
-    ---@return z_buffer table
-    draw_walls = function(self, z_buffer, Player, Map, texture_size, screen_width, screen_height)
+    ---@return table z_buffer
+    ---@return table transparent_walls
+    draw_walls = function(self, z_buffer, transparent_walls, Player, Map, texture_size, screen_width, screen_height)
         local half_screen_height = screen_height / 2
         for x = 1, #z_buffer do
             -- Get direction
@@ -205,9 +205,16 @@ local Raycaster = {
                 end
             end
 
+            if Map.walls[Map_y][Map_x][1] == 0 then
+                -- restart raycasting
+                view_dist = 0
+                goto rayscan
+            end
+
             local wall_x
             local diagonal = false
             local wall_type = Map.walls[Map_y][Map_x][2]
+            local wall_texture = Map.wall_textures[Map.walls[Map_y][Map_x][1]]
 
             -- Check wall types
             if wall_type == 1 or wall_type == 2 then -- Diagonal
@@ -254,6 +261,22 @@ local Raycaster = {
                     end
                     perp_wall_dist = dist
                 end
+            elseif wall_type == 5 then -- n/s only
+                if side == 1 then
+                    local dist = (side_dist_y - delta_dist_y)
+                    perp_wall_dist = dist
+                else
+                    view_dist = 0
+                    goto rayscan
+                end
+            elseif wall_type == 6 then -- e/w only
+                if side == 1 then
+                    view_dist = 0
+                    goto rayscan
+                else
+                    local dist = (side_dist_x - delta_dist_x)
+                    perp_wall_dist = dist
+                end
             elseif wall_type == 0 then -- Regular block walls
                 if side == 0 then
                     perp_wall_dist = (side_dist_x - delta_dist_x)
@@ -273,36 +296,50 @@ local Raycaster = {
             end
 
             -- Drawing walls --
-            if Map.walls[Map_y][Map_x][1] > 0 then
-                -- Calculate the height of the wall slice
-                local line_height = math.floor(screen_height / perp_wall_dist) + 1
-                local draw_start = (-line_height / 2 + half_screen_height)
-                local draw_end = line_height / 2 + half_screen_height
+            -- Calculate the height of the wall slice
+            local line_height = math.floor(screen_height / perp_wall_dist) + 1
+            local draw_start = (-line_height / 2 + half_screen_height)
+            local draw_end = line_height / 2 + half_screen_height
 
-                -- Calculate shading based on distance
-                local shading = 1 - (perp_wall_dist / (Map.max_view_dist / 1.5))
+            -- Calculate shading based on distance
+            local shading = 1 - (perp_wall_dist / (Map.max_view_dist / 1.5))
 
-                -- Calculate wall texture coordinates based on side
-                local tex_x = math.floor(wall_x * texture_size)
-                if side == 0 and ray_dir_x > 0 then
-                    tex_x = texture_size - tex_x - 1
-                end
-                if side == 1 and ray_dir_y < 0 then
-                    tex_x = texture_size - tex_x - 1
-                end
+            -- Calculate wall texture coordinates based on side
+            local tex_x = math.floor(wall_x * texture_size)
+            if side == 0 and ray_dir_x > 0 then
+                tex_x = texture_size - tex_x - 1
+            end
+            if side == 1 and ray_dir_y < 0 then
+                tex_x = texture_size - tex_x - 1
+            end
 
-                local wall_texture = Map.wall_textures[Map.walls[Map_y][Map_x][1]]
-                local scaling = (draw_end + 1 - draw_start) / texture_size
-                local quad = love.graphics.newQuad(tex_x, 0, 1, texture_size, texture_size, texture_size)
+            local scaling = (draw_end + 1 - draw_start) / texture_size
+            local quad = love.graphics.newQuad(tex_x, 0, 1, texture_size, texture_size, texture_size)
 
-                z_buffer[x] = perp_wall_dist
+            z_buffer[x] = perp_wall_dist
 
+            -- Check if the wall is a transparent wall
+            if wall_texture.is_transparent then
+                --Store in transparent walls tbale to be drawn later
+                table.insert(transparent_walls, {
+                    dist = perp_wall_dist,
+                    shading = shading,
+                    wall_texture = wall_texture,
+                    quad = quad,
+                    x = x,
+                    draw_start = draw_start,
+                    scaling = scaling
+                })
+                -- restart raycasting
+                view_dist = 0
+                goto rayscan
+            else -- Just draw if not
                 love.graphics.setColor(shading, shading, shading)
                 love.graphics.draw(wall_texture.img, quad, x, draw_start, 0, 1, scaling)
                 love.graphics.setColor(1, 1, 1)
             end
         end
-        return z_buffer
+        return z_buffer, transparent_walls
     end,
 
     -- Draw the sprites found in the sprite objects table
@@ -313,7 +350,8 @@ local Raycaster = {
     ---@param SpriteObjs table,
     ---@param texture_size number,
     ---@param screen_width number,
-    ---@param screen_height number
+    ---@param screen_height number,
+    ---@return table z_buffer
     draw_sprites = function(self, z_buffer, Player, Map, SpriteObjs, texture_size, screen_width, screen_height)
         local half_screen_width = screen_width / 2
         local half_screen_height = screen_height / 2
@@ -341,13 +379,12 @@ local Raycaster = {
 
                 -- Line height
                 local sprite_height = math.abs(math.floor(screen_height / (transform_y)))
-                local draw_start_y = (-sprite_height / 2 + half_screen_height) -
-                    ((sprite_height / 2) * (SpriteObjs[spr].y_scaling / 2))
+                local draw_start_y = (half_screen_height - (sprite_height * SpriteObjs[spr].y_scaling) / 2)
                 local draw_end_y = sprite_height / 2 + half_screen_height
 
                 -- Texture width
                 local sprite_width = math.abs(math.floor(screen_width / (transform_y))) * SpriteObjs[spr].x_scaling
-                local draw_start_x = math.floor(-sprite_width / 2 + sprite_screen_x)
+                local draw_start_x = math.floor(sprite_screen_x - sprite_width / 2)
                 local draw_end_x = math.floor(sprite_width / 2 + sprite_screen_x)
 
                 -- Calculate shading based on distance
@@ -358,6 +395,8 @@ local Raycaster = {
                     -- Check if the sprite should be visible before drawing
                     if stripe > 0 and stripe < #z_buffer and z_buffer[stripe]
                         and transform_y < (z_buffer[stripe] or math.huge) and transform_y > 0 then
+                        z_buffer[stripe] = transform_y
+
                         -- NOTE 256 might just be texture_size * 4
                         local tex_x = math.floor(256 * (stripe - (-sprite_width / 2 + sprite_screen_x))
                             * texture_size / sprite_width) / 256
@@ -373,6 +412,7 @@ local Raycaster = {
                 end
             end
         end
+        return z_buffer
     end,
 
     -- Render walls, floors, ceilings, skybox, and objects/sprites to the screen
@@ -399,8 +439,22 @@ local Raycaster = {
         local final_frame = love.graphics.newImage(pixel_buffer)
         love.graphics.draw(final_frame)
 
-        z_buffer = self:draw_walls(z_buffer, Player, Map, texture_size, screen_width, screen_height)
-        self:draw_sprites(z_buffer, Player, Map, Map.objs, texture_size, screen_width, screen_height)
+        local transparent_walls = {}
+        z_buffer, transparent_walls = self:draw_walls(z_buffer, transparent_walls, Player, Map, texture_size,
+            screen_width, screen_height)
+
+        z_buffer = self:draw_sprites(z_buffer, Player, Map, Map.objs, texture_size, screen_width, screen_height)
+
+        -- Sort transaprent walls by distance and then draw them after everything
+        table.sort(transparent_walls, function(a, b) return a.dist > b.dist end)
+        for _, t_wall in ipairs(transparent_walls) do
+            if t_wall.dist < z_buffer[t_wall.x] then
+                love.graphics.setColor(t_wall.shading, t_wall.shading, t_wall.shading)
+                love.graphics.draw(t_wall.wall_texture.img, t_wall.quad, t_wall.x, t_wall.draw_start, 0, 1,
+                    t_wall.scaling)
+                love.graphics.setColor(1, 1, 1)
+            end
+        end
     end
 }
 

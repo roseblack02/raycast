@@ -7,7 +7,7 @@ local Push = require("push")
 
 -- Window settings
 local screen_width, screen_height = 640, 480
-local window_width, window_height = love.window.getDesktopDimensions()
+local window_width, window_height = 800, 600 --love.window.getDesktopDimensions()
 Push:setupScreen(screen_width, screen_height, window_width, window_height, { fullscreen = false })
 
 function love.load()

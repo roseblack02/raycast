@@ -12,10 +12,12 @@ local Map = {
     -- 2 se/nw facing diagonal
     -- 3 n/s thin walls
     -- 4 e/w thin walls
+    -- 5 n/s cube
+    -- 6 e/w cube
     walls = { -- {texture, wall type, collision,event flag}
         { { 3, 0, true, 0 }, { 3, 0, true, 0 },  { 3, 0, true, 0 },  { 3, 0, true, 0 },  { 3, 0, true, 0 },  { 3, 0, true, 0 },  { 3, 0, true, 0 },  { 3, 0, true, 0 },  { 12, 0, true, 0 }, { 12, 0, true, 0 }, { 12, 0, true, 0 }, { 1, 0, true, 0 },  { 1, 0, true, 0 },  { 1, 0, true, 0 },  { 1, 0, true, 0 },  { 1, 0, true, 0 }, },
         { { 3, 0, true, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 3, 0, true, 0 },  { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 1, 0, true, 0 },  { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 1, 0, true, 0 }, },
-        { { 3, 0, true, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 3, 0, true, 0 },  { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 1, 0, true, 0 },  { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 1, 0, true, 0 }, },
+        { { 3, 0, true, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 3, 0, true, 0 },  { 18, 5, true, 0 }, { 18, 5, true, 0 }, { 18, 5, true, 0 }, { 1, 0, true, 0 },  { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 1, 0, true, 0 }, },
         { { 3, 0, true, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 3, 0, true, 0 },  { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 4, 4, true, 1 },  { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 1, 0, true, 0 }, },
         { { 3, 0, true, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 3, 0, true, 0 },  { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 1, 0, true, 0 },  { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 1, 0, true, 0 }, },
         { { 3, 0, true, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 3, 0, true, 0 },  { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 1, 0, true, 0 },  { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 1, 0, true, 0 }, },
@@ -23,7 +25,7 @@ local Map = {
         { { 1, 0, true, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 1, 0, true, 0 }, },
         { { 1, 0, true, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 1, 0, true, 0 }, },
         { { 1, 0, true, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 1, 2, true, 0 },  { 1, 0, true, 0 },  { 1, 1, true, 0 },  { 0, 0, false, 0 }, { 1, 0, true, 0 }, },
-        { { 1, 0, true, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 1, 0, true, 0 },  { 0, 0, false, 0 }, { 1, 0, true, 0 },  { 0, 0, false, 0 }, { 1, 0, true, 0 }, },
+        { { 1, 0, true, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 1, 0, true, 0 },  { 0, 0, false, 0 }, { 1, 0, true, 0 },  { 18, 3, true, 0 }, { 1, 0, true, 0 }, },
         { { 2, 0, true, 0 }, { 2, 0, true, 0 },  { 2, 0, true, 0 },  { 6, 3, true, 1 },  { 2, 0, true, 0 },  { 2, 0, true, 0 },  { 2, 0, true, 0 },  { 2, 0, true, 0 },  { 2, 0, true, 0 },  { 2, 0, true, 0 },  { 0, 0, false, 0 }, { 1, 1, true, 0 },  { 1, 0, true, 0 },  { 1, 2, true, 0 },  { 0, 0, false, 0 }, { 1, 0, true, 0 }, },
         { { 2, 0, true, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 2, 0, true, 0 },  { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 1, 0, true, 0 }, },
         { { 2, 0, true, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 2, 0, true, 0 },  { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 0, 0, false, 0 }, { 1, 0, true, 0 }, },
@@ -70,23 +72,24 @@ local Map = {
     -- Load texture data
     -- Wall textures need to be loaded in using graphics to use quads
     wall_textures = {
-        { img = love.graphics.newImage("/textures/walls/wall_brick_01.png"),      size = 128 },
-        { img = love.graphics.newImage("/textures/walls/wall_brick_02.png"),      size = 128 },
-        { img = love.graphics.newImage("/textures/walls/wall_brick_03.png"),      size = 128 },
-        { img = love.graphics.newImage("/textures/walls/wall_brick_door_01.png"), size = 128 },
-        { img = love.graphics.newImage("/textures/walls/wall_brick_door_02.png"), size = 128 },
-        { img = love.graphics.newImage("/textures/walls/wall_brick_door_03.png"), size = 128 },
-        { img = love.graphics.newImage("/textures/walls/wall_brick_door_04.png"), size = 128 },
-        { img = love.graphics.newImage("/textures/walls/wall_brick_door_05.png"), size = 128 },
-        { img = love.graphics.newImage("/textures/walls/wall_brick_door_06.png"), size = 128 },
-        { img = love.graphics.newImage("/textures/walls/wall_magic_01.png"),      size = 128 },
-        { img = love.graphics.newImage("/textures/walls/wall_magic_02.png"),      size = 128 },
-        { img = love.graphics.newImage("/textures/walls/wall_metal_01.png"),      size = 128 },
-        { img = love.graphics.newImage("/textures/walls/wall_painted_01.png"),    size = 128 },
-        { img = love.graphics.newImage("/textures/walls/wall_painted_02.png"),    size = 128 },
-        { img = love.graphics.newImage("/textures/walls/wall_painted_03.png"),    size = 128 },
-        { img = love.graphics.newImage("/textures/walls/wall_painted_04.png"),    size = 128 },
-        { img = love.graphics.newImage("/textures/walls/wall_painted_05.png"),    size = 128 },
+        { img = love.graphics.newImage("/textures/walls/wall_brick_01.png"),      size = 128, is_transparent = false },
+        { img = love.graphics.newImage("/textures/walls/wall_brick_02.png"),      size = 128, is_transparent = false },
+        { img = love.graphics.newImage("/textures/walls/wall_brick_03.png"),      size = 128, is_transparent = false },
+        { img = love.graphics.newImage("/textures/walls/wall_brick_door_01.png"), size = 128, is_transparent = false },
+        { img = love.graphics.newImage("/textures/walls/wall_brick_door_02.png"), size = 128, is_transparent = true },
+        { img = love.graphics.newImage("/textures/walls/wall_brick_door_03.png"), size = 128, is_transparent = false },
+        { img = love.graphics.newImage("/textures/walls/wall_brick_door_04.png"), size = 128, is_transparent = true },
+        { img = love.graphics.newImage("/textures/walls/wall_brick_door_05.png"), size = 128, is_transparent = false },
+        { img = love.graphics.newImage("/textures/walls/wall_brick_door_06.png"), size = 128, is_transparent = true },
+        { img = love.graphics.newImage("/textures/walls/wall_magic_01.png"),      size = 128, is_transparent = false },
+        { img = love.graphics.newImage("/textures/walls/wall_magic_02.png"),      size = 128, is_transparent = false },
+        { img = love.graphics.newImage("/textures/walls/wall_metal_01.png"),      size = 128, is_transparent = false },
+        { img = love.graphics.newImage("/textures/walls/wall_painted_01.png"),    size = 128, is_transparent = false },
+        { img = love.graphics.newImage("/textures/walls/wall_painted_02.png"),    size = 128, is_transparent = false },
+        { img = love.graphics.newImage("/textures/walls/wall_painted_03.png"),    size = 128, is_transparent = false },
+        { img = love.graphics.newImage("/textures/walls/wall_painted_04.png"),    size = 128, is_transparent = false },
+        { img = love.graphics.newImage("/textures/walls/wall_painted_05.png"),    size = 128, is_transparent = false },
+        { img = love.graphics.newImage("/textures/walls/wall_fence_01.png"),      size = 128, is_transparent = true },
     },
     -- Floor/ceiling textures need to be loaded in as image data to use getPixel
     floor_textures = { -- {texture,size}
@@ -140,10 +143,10 @@ local Map = {
     ---@param Objects table
     load_objs = function(self, Objects)
         -- name, y, x, texture, x scaling factor, y scaling factor, table of extra properties
-        table.insert(self.objs, Objects:create_obj("barrel", 5, 5, 1, 0.5, 0.5, {}))
-        table.insert(self.objs, Objects:create_obj("barrel", 2.5, 3.1, 1, 0.5, 0.5, {}))
-        table.insert(self.objs, Objects:create_obj("barrel", 2.7, 4.5, 1, 1, 1, {}))
-        table.insert(self.objs, Objects:create_obj("barrel", 2.5, 5, 1, 0.5, 0.5, {}))
+        table.insert(self.objs, Objects:create_obj("barrel", 5, 5, 1, 0.5, 0.25, {}))
+        table.insert(self.objs, Objects:create_obj("barrel", 2.5, 3.1, 1, 0.5, 0.25, {}))
+        table.insert(self.objs, Objects:create_obj("barrel", 2.7, 4.5, 1, 0.75, 0.5, {}))
+        table.insert(self.objs, Objects:create_obj("barrel", 2.5, 5, 1, 0.5, 0.25, {}))
         table.insert(self.objs, Objects:create_obj("lamp_post", 8, 8.5, 2, 1, 2, {}))
         table.insert(self.objs, Objects:create_obj("lamp_post", 11.5, 6, 2, 1, 2, {}))
     end,

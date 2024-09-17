@@ -1,4 +1,4 @@
-local player = {
+local Player = {
     x = 5,
     y = 10,
     dir_x = 1,
@@ -18,39 +18,40 @@ local player = {
         interact = "e",
     },
     -- Update function for handling things such as player movement and interactions
-    -- map is the map object
-    update = function(self, map)
+    -----------------------------
+    ---@param Map table,
+    update = function(self, Map)
         -- Forwards and back
         if love.keyboard.isDown(self.keybinds.fward) then
-            if not map.walls[math.floor(self.y)][math.floor(self.x + self.dir_x * self.move_speed)][3] then
+            if not Map.walls[math.floor(self.y)][math.floor(self.x + self.dir_x * self.move_speed)][3] then
                 self.x = self.x + self.dir_x * self.move_speed
             end
-            if not map.walls[math.floor(self.y + self.dir_y * self.move_speed)][math.floor(self.x)][3] then
+            if not Map.walls[math.floor(self.y + self.dir_y * self.move_speed)][math.floor(self.x)][3] then
                 self.y = self.y + self.dir_y * self.move_speed
             end
         end
         if love.keyboard.isDown(self.keybinds.bward) then
-            if not map.walls[math.floor(self.y)][math.floor(self.x - self.dir_x * self.move_speed)][3] then
+            if not Map.walls[math.floor(self.y)][math.floor(self.x - self.dir_x * self.move_speed)][3] then
                 self.x = self.x - self.dir_x * self.move_speed
             end
-            if not map.walls[math.floor(self.y - self.dir_y * self.move_speed)][math.floor(self.x)][3] then
+            if not Map.walls[math.floor(self.y - self.dir_y * self.move_speed)][math.floor(self.x)][3] then
                 self.y = self.y - self.dir_y * self.move_speed
             end
         end
         -- Left and right
         if love.keyboard.isDown(self.keybinds.strafe_l) then
-            if not map.walls[math.floor(self.y)][math.floor(self.x - self.plane_x * self.move_speed)][3] then
+            if not Map.walls[math.floor(self.y)][math.floor(self.x - self.plane_x * self.move_speed)][3] then
                 self.x = self.x - self.plane_x * (self.move_speed / 2)
             end
-            if not map.walls[math.floor(self.y - self.plane_y * self.move_speed)][math.floor(self.x)][3] then
+            if not Map.walls[math.floor(self.y - self.plane_y * self.move_speed)][math.floor(self.x)][3] then
                 self.y = self.y - self.plane_y * (self.move_speed / 2)
             end
         end
         if love.keyboard.isDown(self.keybinds.strafe_r) then
-            if not map.walls[math.floor(self.y)][math.floor(self.x + self.plane_x * self.move_speed)][3] then
+            if not Map.walls[math.floor(self.y)][math.floor(self.x + self.plane_x * self.move_speed)][3] then
                 self.x = self.x + self.plane_x * (self.move_speed / 2)
             end
-            if not map.walls[math.floor(self.y + self.plane_y * self.move_speed)][math.floor(self.x)][3] then
+            if not Map.walls[math.floor(self.y + self.plane_y * self.move_speed)][math.floor(self.x)][3] then
                 self.y = self.y + self.plane_y * (self.move_speed / 2)
             end
         end
@@ -78,27 +79,30 @@ local player = {
         -- Interact
         if love.keyboard.isDown(self.keybinds.interact) then
             -- Get tile data
-            local tile, x, y = self:check_tile(map)
+            local tile, x, y = self:check_tile(Map)
 
             -- Check for an event flag
             local flag = tile[4]
             if flag > 0 then
                 -- Grab event using the flag and call it
-                local fn = map.events[tile[4]]
-                fn(map, self, x, y)
+                local fn = Map.events[tile[4]]
+                fn(Map, self, x, y)
             end
         end
     end,
     -- Get data of the wall tile in front of the player
-    check_tile = function(self, map)
+    -----------------------------
+    ---@param Map table
+    check_tile = function(self, Map)
         local y, x = math.floor(self.y + self.dir_y * self.move_speed), math.floor(self.x + self.dir_x * self.move_speed)
-        local tile = map.walls[y][x]
+        local tile = Map.walls[y][x]
         return tile, x, y
     end,
     -- Function for drawing the players hands/weapons etc.
+    -----------------------------
     draw = function(self)
 
     end
 }
 
-return player
+return Player

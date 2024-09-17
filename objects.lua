@@ -3,8 +3,15 @@
 
 local objects = {
     -- Creates an object then inserts it into the table passed in
-    -- props is a table of any additional properties
-    -- distance will be used when sorting sprites
+    -----------------------------
+    ---@param name string,
+    ---@param y number,
+    ---@param x number,
+    ---@param texture number,
+    ---@param x_scaling number,
+    ---@param y_scaling number,
+    ---@param props table,
+    ---@return obj table
     create_obj = function(self, name, y, x, texture, x_scaling, y_scaling, props)
         local obj = {
             name = name,

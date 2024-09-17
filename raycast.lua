@@ -3,9 +3,19 @@
 -- Variable height walls would be really nice
 -- Add a scaling factor to objs and use that to scale sprites
 
-local raycaster = {
-    -- Storing wall distance
-    -- Calculate itersection of diagonal walls
+-- Module for raycasting and rendering the map plus objects/sprites to the screen
+local Raycaster = {
+    -- Calculate itersection of diagonal walls to get the perpendicular distance from player
+    -----------------------------
+    ---@param wall_x0 number,
+    ---@param wall_y0 number,
+    ---@param wall_x1 number,
+    ---@param wall_y1 number,
+    ---@param player_x number,
+    ---@param player_y number,
+    ---@param dir_x number,
+    ---@param dir_y number,
+    ---@return i number
     wall_intersect = function(self, wall_x0, wall_y0, wall_x1, wall_y1, player_x, player_y, dir_x, dir_y)
         local i = { tr = -1, tw = -1 }                      -- Intersection results: tr = ray distance, tw = wall intersection point
         local m = (wall_y1 - wall_y0) / (wall_x1 - wall_x0) -- Slope
@@ -21,21 +31,17 @@ local raycaster = {
         return i
     end,
 
-    -- Initialise the z buffer to be a table with the screens width
-    init_z_buffer = function(self, z_buffer, screen_width)
-        for i = 1, screen_width do
-            table.insert(z_buffer, 999)
-        end
-    end,
-
-    -- Draw the skybox image and wrap it around the player
-    draw_skybox = function(self, player, map)
-        local skybox_tex = SKYBOX_TEXTURES[map.skybox_tex]
+    -- Draw the skybox image and wrap it around the Player
+    -----------------------------
+    ---@param Player table,
+    ---@param Map table,
+    draw_skybox = function(self, Player, Map)
+        local skybox_tex = Map.skybox_textures[Map.skybox_tex]
         local scale = 2
         local scaled_width = skybox_tex.width * scale
 
-        -- Get player angle
-        local radians = math.atan2(player.dir_y, player.dir_x)
+        -- Get Player angle
+        local radians = math.atan2(Player.dir_y, Player.dir_x)
         local degrees = math.deg(radians)
         -- Adjust to 0-360 degree range
         if degrees < 0 then
@@ -51,8 +57,16 @@ local raycaster = {
         end
     end,
 
-    --Draw floors and ceilings based on their respective tables in the map
-    draw_floors = function(self, player, map, pixel_buffer, texture_size, screen_width, screen_height)
+    -- Draw floors and ceilings based on their respective tables in the Map by placing pixels on an image data buffer
+    -----------------------------
+    ---@param Player table,
+    ---@param Map table,
+    ---@param pixel_buffer imageData,
+    ---@param texture_size number,
+    ---@param screen_width number,
+    ---@param screen_height number,
+    ---@return pixel_buffer imageData
+    draw_floors = function(self, Player, Map, pixel_buffer, texture_size, screen_width, screen_height)
         local half_screen_height = screen_height / 2
         local pos_z = 0.5 * screen_height -- Reference distance for perspective projection
 
@@ -61,24 +75,24 @@ local raycaster = {
             local row_dist = pos_z / (p ~= 0 and p or 1) -- Avoid division by zero
 
             local inv_screen_width = 1 / screen_width
-            local player_dir_plane_x = player.dir_x + player.plane_x
-            local player_dir_plane_y = player.dir_y + player.plane_y
+            local player_dir_plane_x = Player.dir_x + Player.plane_x
+            local player_dir_plane_y = Player.dir_y + Player.plane_y
 
-            local floor_step_x = row_dist * (player_dir_plane_x - (player.dir_x - player.plane_x)) * inv_screen_width
-            local floor_step_y = row_dist * (player_dir_plane_y - (player.dir_y - player.plane_y)) * inv_screen_width
-            local floor_x = player.x + row_dist * (player.dir_x - player.plane_x)
-            local floor_y = player.y + row_dist * (player.dir_y - player.plane_y)
+            local floor_step_x = row_dist * (player_dir_plane_x - (Player.dir_x - Player.plane_x)) * inv_screen_width
+            local floor_step_y = row_dist * (player_dir_plane_y - (Player.dir_y - Player.plane_y)) * inv_screen_width
+            local floor_x = Player.x + row_dist * (Player.dir_x - Player.plane_x)
+            local floor_y = Player.y + row_dist * (Player.dir_y - Player.plane_y)
 
-            if row_dist < map.max_view_dist then
+            if row_dist < Map.max_view_dist then
                 for x = 0, screen_width - 1 do
                     -- Get position
                     local cell_x = math.abs(math.floor(floor_x))
                     local cell_y = math.abs(math.floor(floor_y))
 
-                    if cell_x > 0 and cell_x < map.width
-                        and cell_y > 0 and cell_y < map.height then
-                        local floor_tex = map.floors[cell_y][cell_x]
-                        local ceiling_tex = map.ceilings[cell_y][cell_x]
+                    if cell_x > 0 and cell_x < Map.width
+                        and cell_y > 0 and cell_y < Map.height then
+                        local floor_tex = Map.floors[cell_y][cell_x]
+                        local ceiling_tex = Map.ceilings[cell_y][cell_x]
 
                         -- Texture coordinates and clamp them
                         local tx = math.floor(texture_size * (floor_x - cell_x)) % texture_size
@@ -87,12 +101,12 @@ local raycaster = {
                         ty = math.max(0, math.min(ty, texture_size - 1))
 
                         -- Calculate shading based on distance
-                        local shading = 1 - (row_dist / (map.max_view_dist / 1.5))
+                        local shading = 1 - (row_dist / (Map.max_view_dist / 1.5))
 
                         if y > 0 and y < screen_height then
                             -- Floor
                             if floor_tex > 0 then
-                                local r, g, b, a = FLOOR_TEXTURES[floor_tex].img:getPixel(tx, ty)
+                                local r, g, b, a = Map.floor_textures[floor_tex].img:getPixel(tx, ty)
                                 r, g, b = r * shading, g * shading, b * shading
 
                                 if a == 1 then
@@ -102,7 +116,7 @@ local raycaster = {
 
                             -- Ceiling
                             if ceiling_tex > 0 then
-                                local r, g, b, a = FLOOR_TEXTURES[ceiling_tex].img:getPixel(tx, ty)
+                                local r, g, b, a = Map.floor_textures[ceiling_tex].img:getPixel(tx, ty)
                                 r, g, b = r * shading, g * shading, b * shading
                                 if a == 1 then
                                     pixel_buffer:setPixel(x, screen_height - y - 1, r, g, b)
@@ -120,17 +134,25 @@ local raycaster = {
         return pixel_buffer
     end,
 
-    -- Draw walls based on the wall table in the map
-    draw_walls = function(self, z_buffer, player, map, texture_size, screen_width, screen_height)
+    -- Draw walls based on the wall table in the Map and sets their distance in the z buffer
+    -----------------------------
+    ---@param z_buffer table,
+    ---@param Player table,
+    ---@param Map table,
+    ---@param texture_size number,
+    ---@param screen_width number,
+    ---@param screen_height number,
+    ---@return z_buffer table
+    draw_walls = function(self, z_buffer, Player, Map, texture_size, screen_width, screen_height)
         local half_screen_height = screen_height / 2
         for x = 1, #z_buffer do
             -- Get direction
-            local cam_x = 2 * x / SCREEN_WIDTH - 1
-            local ray_dir_x = player.dir_x + player.plane_x * cam_x
-            local ray_dir_y = player.dir_y + player.plane_y * cam_x
+            local cam_x = 2 * x / screen_width - 1
+            local ray_dir_x = Player.dir_x + Player.plane_x * cam_x
+            local ray_dir_y = Player.dir_y + Player.plane_y * cam_x
 
-            local map_x = math.floor(player.x)
-            local map_y = math.floor(player.y)
+            local Map_x = math.floor(Player.x)
+            local Map_y = math.floor(Player.y)
 
             local side_dist_x, side_dist_y
             local delta_dist_x = (ray_dir_x == 0) and 1e30 or math.abs(1 / ray_dir_x)
@@ -144,62 +166,62 @@ local raycaster = {
             -- Initial step and side distance based on ray direction
             if ray_dir_x < 0 then
                 step_x = -1
-                side_dist_x = (player.x - map_x) * delta_dist_x
+                side_dist_x = (Player.x - Map_x) * delta_dist_x
             else
                 step_x = 1
-                side_dist_x = (map_x + 1.0 - player.x) * delta_dist_x
+                side_dist_x = (Map_x + 1.0 - Player.x) * delta_dist_x
             end
             if ray_dir_y < 0 then
                 step_y = -1
-                side_dist_y = (player.y - map_y) * delta_dist_y
+                side_dist_y = (Player.y - Map_y) * delta_dist_y
             else
                 step_y = 1
-                side_dist_y = (map_y + 1.0 - player.y) * delta_dist_y
+                side_dist_y = (Map_y + 1.0 - Player.y) * delta_dist_y
             end
 
             -- Using DDA to find the wall
             ::rayscan::
-            while view_dist < map.max_view_dist do
+            while view_dist < Map.max_view_dist do
                 if side_dist_x < side_dist_y then
                     side_dist_x = side_dist_x + delta_dist_x
-                    map_x = map_x + step_x
+                    Map_x = Map_x + step_x
                     side = 0
                     view_dist = view_dist + 1
                 else
                     side_dist_y = side_dist_y + delta_dist_y
-                    map_y = map_y + step_y
+                    Map_y = Map_y + step_y
                     side = 1
                     view_dist = view_dist + 1
                 end
 
-                -- Check for map boundaries
-                if map_x < 0 or map_x >= map.width or map_y < 0 or map_y >= map.height then
+                -- Check for Map boundaries
+                if Map_x < 0 or Map_x >= Map.width or Map_y < 0 or Map_y >= Map.height then
                     break
                 end
 
                 -- Check if the wall has been hit
-                if map.walls[map_y][map_x][1] > 0 then
-                    view_dist = map.max_view_dist
+                if Map.walls[Map_y][Map_x][1] > 0 then
+                    view_dist = Map.max_view_dist
                 end
             end
 
             local wall_x
             local diagonal = false
-            local wall_type = map.walls[map_y][map_x][2]
+            local wall_type = Map.walls[Map_y][Map_x][2]
 
             -- Check wall types
             if wall_type == 1 or wall_type == 2 then -- Diagonal
                 local i
                 local d
                 if wall_type == 1 then
-                    i = self:wall_intersect(map_x, map_y, map_x + 1, map_y + 1,
-                        player.x, player.y, ray_dir_x, ray_dir_y)
+                    i = self:wall_intersect(Map_x, Map_y, Map_x + 1, Map_y + 1,
+                        Player.x, Player.y, ray_dir_x, ray_dir_y)
 
-                    d = player.x - map_x - player.y + map_y
+                    d = Player.x - Map_x - Player.y + Map_y
                 else
-                    i = self:wall_intersect(map_x, map_y + 1, map_x + 1, map_y,
-                        player.x, player.y, ray_dir_x, ray_dir_y)
-                    d = map_x - player.x - player.y + map_y + 1
+                    i = self:wall_intersect(Map_x, Map_y + 1, Map_x + 1, Map_y,
+                        Player.x, Player.y, ray_dir_x, ray_dir_y)
+                    d = Map_x - Player.x - Player.y + Map_y + 1
                 end
 
                 if i.tw < 0 or i.tw >= 1 then
@@ -243,22 +265,22 @@ local raycaster = {
             -- Calculate wall texture coordinates based on side
             if not diagonal then
                 if side == 0 then
-                    wall_x = player.y + perp_wall_dist * ray_dir_y
+                    wall_x = Player.y + perp_wall_dist * ray_dir_y
                 else
-                    wall_x = player.x + perp_wall_dist * ray_dir_x
+                    wall_x = Player.x + perp_wall_dist * ray_dir_x
                 end
                 wall_x = wall_x - math.floor(wall_x)
             end
 
             -- Drawing walls --
-            if map.walls[map_y][map_x][1] > 0 then
+            if Map.walls[Map_y][Map_x][1] > 0 then
                 -- Calculate the height of the wall slice
                 local line_height = math.floor(screen_height / perp_wall_dist) + 1
                 local draw_start = (-line_height / 2 + half_screen_height)
                 local draw_end = line_height / 2 + half_screen_height
 
                 -- Calculate shading based on distance
-                local shading = 1 - (perp_wall_dist / (map.max_view_dist / 1.5))
+                local shading = 1 - (perp_wall_dist / (Map.max_view_dist / 1.5))
 
                 -- Calculate wall texture coordinates based on side
                 local tex_x = math.floor(wall_x * texture_size)
@@ -269,7 +291,7 @@ local raycaster = {
                     tex_x = texture_size - tex_x - 1
                 end
 
-                local wall_texture = WALL_TEXTURES[map.walls[map_y][map_x][1]]
+                local wall_texture = Map.wall_textures[Map.walls[Map_y][Map_x][1]]
                 local scaling = (draw_end + 1 - draw_start) / texture_size
                 local quad = love.graphics.newQuad(tex_x, 0, 1, texture_size, texture_size, texture_size)
 
@@ -284,27 +306,35 @@ local raycaster = {
     end,
 
     -- Draw the sprites found in the sprite objects table
-    draw_sprites = function(self, z_buffer, player, map, sprite_objs, texture_size, screen_width, screen_height)
+    -----------------------------
+    ---@param z_buffer table,
+    ---@param Player table,
+    ---@param Map table,
+    ---@param SpriteObjs table,
+    ---@param texture_size number,
+    ---@param screen_width number,
+    ---@param screen_height number
+    draw_sprites = function(self, z_buffer, Player, Map, SpriteObjs, texture_size, screen_width, screen_height)
         local half_screen_width = screen_width / 2
         local half_screen_height = screen_height / 2
 
-        -- Get distance from player for each object and sort in reverse order before they are drawn
-        for i = 1, #sprite_objs do
-            sprite_objs[i].distance = ((player.x - sprite_objs[i].x) ^ 2) + ((player.y - sprite_objs[i].y) ^ 2)
+        -- Get distance from Player for each object and sort in reverse order before they are drawn
+        for i = 1, #SpriteObjs do
+            SpriteObjs[i].distance = ((Player.x - SpriteObjs[i].x) ^ 2) + ((Player.y - SpriteObjs[i].y) ^ 2)
         end
-        table.sort(sprite_objs, function(a, b) return a.distance > b.distance end)
+        table.sort(SpriteObjs, function(a, b) return a.distance > b.distance end)
 
-        for spr = 1, #sprite_objs do
+        for spr = 1, #SpriteObjs do
             -- Only draw sprite if the distance is with the max view distance
-            if sprite_objs[spr].distance < map.max_spr_dist then
-                -- Get x position relative to the player
-                local sprite_x = sprite_objs[spr].x - player.x
-                local sprite_y = sprite_objs[spr].y - player.y
+            if SpriteObjs[spr].distance < Map.max_spr_dist then
+                -- Get x position relative to the Player
+                local sprite_x = SpriteObjs[spr].x - Player.x
+                local sprite_y = SpriteObjs[spr].y - Player.y
 
                 -- Transform sprite with the inverse camera matrix
-                local inv_det = 1 / (player.plane_x * player.dir_y - player.dir_x * player.plane_y)
-                local transform_x = inv_det * (player.dir_y * sprite_x - player.dir_x * sprite_y)
-                local transform_y = inv_det * (-player.plane_y * sprite_x + player.plane_x * sprite_y)
+                local inv_det = 1 / (Player.plane_x * Player.dir_y - Player.dir_x * Player.plane_y)
+                local transform_x = inv_det * (Player.dir_y * sprite_x - Player.dir_x * sprite_y)
+                local transform_y = inv_det * (-Player.plane_y * sprite_x + Player.plane_x * sprite_y)
 
                 -- Screen position
                 local sprite_screen_x = math.floor((half_screen_width) * (1 + transform_x / transform_y))
@@ -312,17 +342,17 @@ local raycaster = {
                 -- Line height
                 local sprite_height = math.abs(math.floor(screen_height / (transform_y)))
                 local draw_start_y = (-sprite_height / 2 + half_screen_height) -
-                    ((sprite_height / 2) * (sprite_objs[spr].y_scaling / 2))
+                    ((sprite_height / 2) * (SpriteObjs[spr].y_scaling / 2))
                 local draw_end_y = sprite_height / 2 + half_screen_height
 
                 -- Texture width
-                local sprite_width = math.abs(math.floor(screen_width / (transform_y))) * sprite_objs[spr].x_scaling
+                local sprite_width = math.abs(math.floor(screen_width / (transform_y))) * SpriteObjs[spr].x_scaling
                 local draw_start_x = math.floor(-sprite_width / 2 + sprite_screen_x)
                 local draw_end_x = math.floor(sprite_width / 2 + sprite_screen_x)
 
                 -- Calculate shading based on distance
-                local shading = 1 - (transform_y / (map.max_view_dist / 1.5))
-                local tex_num = sprite_objs[spr].texture
+                local shading = 1 - (transform_y / (Map.max_view_dist / 1.5))
+                local tex_num = SpriteObjs[spr].texture
 
                 for stripe = draw_start_x, draw_end_x do
                     -- Check if the sprite should be visible before drawing
@@ -332,7 +362,7 @@ local raycaster = {
                         local tex_x = math.floor(256 * (stripe - (-sprite_width / 2 + sprite_screen_x))
                             * texture_size / sprite_width) / 256
 
-                        local sprite_texture = SPRITE_TEXTURES[tex_num]
+                        local sprite_texture = Map.sprite_textures[tex_num]
                         local scaling = (draw_end_y - draw_start_y) / texture_size
                         local quad = love.graphics.newQuad(tex_x, 0, 1, texture_size, texture_size, texture_size)
 
@@ -345,26 +375,33 @@ local raycaster = {
         end
     end,
 
-    -- Render everything to the screen
-    raycasting = function(self, player, sprite_objs, map, screen_width, screen_height)
+    -- Render walls, floors, ceilings, skybox, and objects/sprites to the screen
+    -----------------------------
+    ---@param Player table,
+    ---@param Map table,
+    ---@param screen_width number,
+    ---@param screen_height number
+    raycasting = function(self, Player, Map, screen_width, screen_height)
         local texture_size = 128 -- Size of textures but should be using texture.size idealy
 
         -- Create image data to store the pixel data so floors and ceiling can all be drawn with one draw function
         local pixel_buffer = love.image.newImageData(screen_width, screen_height)
         local z_buffer = {}
-        self:init_z_buffer(z_buffer, screen_width)
-
-        if map.skybox then
-            self:draw_skybox(player, map)
+        for i = 1, screen_width do
+            table.insert(z_buffer, 999)
         end
 
-        pixel_buffer = self:draw_floors(player, map, pixel_buffer, texture_size, screen_width, screen_height)
+        if Map.skybox then
+            self:draw_skybox(Player, Map)
+        end
+
+        pixel_buffer = self:draw_floors(Player, Map, pixel_buffer, texture_size, screen_width, screen_height)
         local final_frame = love.graphics.newImage(pixel_buffer)
         love.graphics.draw(final_frame)
 
-        z_buffer = self:draw_walls(z_buffer, player, map, texture_size, screen_width, screen_height)
-        self:draw_sprites(z_buffer, player, map, sprite_objs, texture_size, screen_width, screen_height)
+        z_buffer = self:draw_walls(z_buffer, Player, Map, texture_size, screen_width, screen_height)
+        self:draw_sprites(z_buffer, Player, Map, Map.objs, texture_size, screen_width, screen_height)
     end
 }
 
-return raycaster
+return Raycaster

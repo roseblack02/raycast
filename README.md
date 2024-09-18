@@ -1,5 +1,5 @@
 A raycaster using Love2D :)
 
-On Windows you can drag and drop the project folder onto the Love2D executable if you have Love2D installed.
+Currently, Love2D must be installed to run. Either drag and drop the project folder onto the Love2D binary or run the love command on the project folder.
 
-On Linux you can use the love command on the project folder if you have Love2D installed.
+Controls are WASD to move, arrow keys to look, and e to interact. 

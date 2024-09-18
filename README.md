@@ -4,5 +4,5 @@ Currently, Love2D must be installed to run. Either drag and drop the project fol
 
 Controls are WASD to move, arrow keys to look, and e to interact. 
 
-![Preview]([https://media3.giphy.com/media/aUovxH8Vf9qDu/giphy.gif](https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExeW52ZHJ5d2Y5bTdiMWgwMHBhYXF2dzNoOTB6NDBmMm1xeHMzdm82OSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/coFQaAzcfpkz5DAkri/giphy-downsized-large.gif))
+![Preview](https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExeW52ZHJ5d2Y5bTdiMWgwMHBhYXF2dzNoOTB6NDBmMm1xeHMzdm82OSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/coFQaAzcfpkz5DAkri/giphy-downsized-large.gif)
 

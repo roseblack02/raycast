@@ -4,19 +4,21 @@ local objects = {
     ---@param name string,
     ---@param y number,
     ---@param x number,
-    ---@param texture number,
+    ---@param textures table,
     ---@param x_scaling number,
     ---@param y_scaling number,
+    ---@param is_directional boolean,
     ---@param props table,
     ---@return table obj
-    create_obj = function(self, name, y, x, texture, x_scaling, y_scaling, props)
+    create_obj = function(self, name, y, x, textures, x_scaling, y_scaling, is_directional, props)
         local obj = {
             name = name,
             x = x,
             y = y,
-            texture = texture,
+            textures = textures,
             x_scaling = x_scaling,
             y_scaling = y_scaling,
+            is_directional = is_directional,
             distance = 0,
             update = function(self)
             end,

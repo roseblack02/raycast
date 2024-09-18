@@ -3,6 +3,7 @@ local Player = {
     y = 10,
     dir_x = 1,
     dir_y = 0,
+    dir = 1,
     plane_x = 0,
     plane_y = 0.66,
     move_speed = 0.05,
@@ -65,6 +66,8 @@ local Player = {
             local old_plane_x = self.plane_x
             self.plane_x = self.plane_x * math.cos(-self.cam_speed) - self.plane_y * math.sin(-self.cam_speed)
             self.plane_y = old_plane_x * math.sin(-self.cam_speed) + self.plane_y * math.cos(-self.cam_speed)
+
+            self:check_direction()
         end
         if love.keyboard.isDown(self.keybinds.look_r) then
             local old_dir_x = self.dir_x
@@ -74,6 +77,8 @@ local Player = {
             local old_plane_x = self.plane_x
             self.plane_x = self.plane_x * math.cos(self.cam_speed) - self.plane_y * math.sin(self.cam_speed)
             self.plane_y = old_plane_x * math.sin(self.cam_speed) + self.plane_y * math.cos(self.cam_speed)
+
+            self:check_direction()
         end
 
         -- Interact
@@ -97,6 +102,28 @@ local Player = {
         local y, x = math.floor(self.y + self.dir_y * self.move_speed), math.floor(self.x + self.dir_x * self.move_speed)
         local tile = Map.walls[y][x]
         return tile, x, y
+    end,
+    -- Function for checking the players direction 1 is north, 2 is east, 3 is south, 4 is west
+    -----------------------------
+    check_direction = function(self)
+        -- note that north and south are flipped e.g. (0,-1) is north
+        if self.dir_x < 0.5 and self.dir_x > -0.5 then
+            if self.dir_y > 0.5 then
+                self.dir = 3
+            elseif self.dir_y < -0.5 then
+                self.dir = 1
+            end
+        end
+        if self.dir_y < 0.5 and self.dir_y > -0.5 then
+            if self.dir_x > 0.5 then
+                self.dir = 2
+            elseif self.dir_x < -0.5 then
+                self.dir = 4
+            end
+        end
+
+        -- DEBUG
+        print("dir: " .. self.dir .. " x: " .. self.dir_x .. "y: " .. self.dir_y)
     end,
     -- Function for drawing the players hands/weapons etc.
     -----------------------------

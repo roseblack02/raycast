@@ -389,7 +389,13 @@ local Raycaster = {
 
                 -- Calculate shading based on distance
                 local shading = 1 - (transform_y / (Map.max_view_dist / 1.5))
-                local tex_num = SpriteObjs[spr].texture
+                local tex_num = 1
+                if SpriteObjs[spr].is_directional then
+                    -- If the sprite is directional then you need to use the player direction to get the texture
+                    tex_num = SpriteObjs[spr].textures[Player.dir]
+                else
+                    tex_num = SpriteObjs[spr].textures[1]
+                end
 
                 for stripe = draw_start_x, draw_end_x do
                     -- Check if the sprite should be visible before drawing

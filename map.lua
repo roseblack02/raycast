@@ -147,10 +147,10 @@ local Map = {
     ---@param Objects table
     load_objs = function(self, Objects)
         -- name, y, x, textures table, x scaling factor, y scaling factor,is_directional, table of extra properties
-
         table.insert(self.objs, Objects:create_obj("barrel", 2.5, 3.1, { 1 }, 0.5, 0.25, false, {}))
         table.insert(self.objs, Objects:create_obj("barrel", 2.7, 4.5, { 1 }, 0.75, 0.5, false, {}))
         table.insert(self.objs, Objects:create_obj("barrel", 2.5, 5, { 1 }, 0.5, 0.25, false, {}))
+        table.insert(self.objs, Objects:create_obj("barrel", 12, 15.5, { 1 }, 0.5, 0.25, false, {}))
         table.insert(self.objs, Objects:create_obj("lamp_post", 8, 8.5, { 2 }, 1, 2, false, {}))
         table.insert(self.objs, Objects:create_obj("lamp_post", 11.5, 6, { 2 }, 1, 2, false, {}))
         table.insert(self.objs, Objects:create_obj("box", 5, 5, { 3, 4, 5, 6 }, 0.25, -0.25, true, {}))

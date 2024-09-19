@@ -80,7 +80,6 @@ local Player = {
 
             self:check_direction()
         end
-
         -- Interact
         if love.keyboard.isDown(self.keybinds.interact) then
             -- Get tile data
@@ -121,9 +120,6 @@ local Player = {
                 self.dir = 4
             end
         end
-
-        -- DEBUG
-        print("dir: " .. self.dir .. " x: " .. self.dir_x .. "y: " .. self.dir_y)
     end,
     -- Function for drawing the players hands/weapons etc.
     -----------------------------

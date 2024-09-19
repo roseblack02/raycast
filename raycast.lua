@@ -135,15 +135,15 @@ local Raycaster = {
     -- Draw walls based on the wall table in the Map and sets their distance in the z buffer
     -----------------------------
     ---@param z_buffer table,
-    ---@param transparent_walls table,
+    ---@param transparent_quads table,
     ---@param Player table,
     ---@param Map table,
     ---@param texture_size number,
     ---@param screen_width number,
     ---@param screen_height number,
     ---@return table z_buffer
-    ---@return table transparent_walls
-    draw_walls = function(self, z_buffer, transparent_walls, Player, Map, texture_size, screen_width, screen_height)
+    ---@return table transparent_quads
+    draw_walls = function(self, z_buffer, transparent_quads, Player, Map, texture_size, screen_width, screen_height)
         local half_screen_height = screen_height / 2
         for x = 1, #z_buffer do
             -- Get direction
@@ -321,10 +321,10 @@ local Raycaster = {
             -- Check if the wall is a transparent wall
             if wall_texture.is_transparent then
                 --Store in transparent walls tbale to be drawn later
-                table.insert(transparent_walls, {
+                table.insert(transparent_quads, {
                     dist = perp_wall_dist,
                     shading = shading,
-                    wall_texture = wall_texture,
+                    texture = wall_texture,
                     quad = quad,
                     x = x,
                     draw_start = draw_start,
@@ -339,12 +339,13 @@ local Raycaster = {
                 love.graphics.setColor(1, 1, 1)
             end
         end
-        return z_buffer, transparent_walls
+        return z_buffer, transparent_quads
     end,
 
     -- Draw the sprites found in the sprite objects table
     -----------------------------
     ---@param z_buffer table,
+    ---@param transparent_quads table,
     ---@param Player table,
     ---@param Map table,
     ---@param SpriteObjs table,
@@ -352,7 +353,9 @@ local Raycaster = {
     ---@param screen_width number,
     ---@param screen_height number,
     ---@return table z_buffer
-    draw_sprites = function(self, z_buffer, Player, Map, SpriteObjs, texture_size, screen_width, screen_height)
+    ---@return table transparent_quads
+    draw_sprites = function(self, z_buffer, transparent_quads, Player, Map, SpriteObjs, texture_size, screen_width,
+                            screen_height)
         local half_screen_width = screen_width / 2
         local half_screen_height = screen_height / 2
 
@@ -360,8 +363,6 @@ local Raycaster = {
         for i = 1, #SpriteObjs do
             SpriteObjs[i].distance = ((Player.x - SpriteObjs[i].x) ^ 2) + ((Player.y - SpriteObjs[i].y) ^ 2)
         end
-        table.sort(SpriteObjs, function(a, b) return a.distance > b.distance end)
-
         for spr = 1, #SpriteObjs do
             -- Only draw sprite if the distance is with the max view distance
             if SpriteObjs[spr].distance < Map.max_spr_dist then
@@ -401,24 +402,27 @@ local Raycaster = {
                     -- Check if the sprite should be visible before drawing
                     if stripe > 0 and stripe < #z_buffer and z_buffer[stripe]
                         and transform_y < (z_buffer[stripe] or math.huge) and transform_y > 0 then
-                        z_buffer[stripe] = transform_y
-
-                        -- NOTE 256 might just be texture_size * 4
-                        local tex_x = math.floor(256 * (stripe - (-sprite_width / 2 + sprite_screen_x))
-                            * texture_size / sprite_width) / 256
+                        local tex_x = math.floor((stripe - draw_start_x) * texture_size / sprite_width)
 
                         local sprite_texture = Map.sprite_textures[tex_num]
                         local scaling = (draw_end_y - draw_start_y) / texture_size
                         local quad = love.graphics.newQuad(tex_x, 0, 1, texture_size, texture_size, texture_size)
 
-                        love.graphics.setColor(shading, shading, shading)
-                        love.graphics.draw(sprite_texture.img, quad, stripe, draw_start_y, 0, 1, scaling)
-                        love.graphics.setColor(1, 1, 1)
+                        -- Put in transaprant quads table so they can be drawn over each other properly
+                        table.insert(transparent_quads, {
+                            dist = transform_y,
+                            shading = shading,
+                            texture = sprite_texture,
+                            quad = quad,
+                            x = stripe,
+                            draw_start = draw_start_y,
+                            scaling = scaling
+                        })
                     end
                 end
             end
         end
-        return z_buffer
+        return z_buffer, transparent_quads
     end,
 
     -- Render walls, floors, ceilings, skybox, and objects/sprites to the screen
@@ -445,19 +449,20 @@ local Raycaster = {
         local final_frame = love.graphics.newImage(pixel_buffer)
         love.graphics.draw(final_frame)
 
-        local transparent_walls = {}
-        z_buffer, transparent_walls = self:draw_walls(z_buffer, transparent_walls, Player, Map, texture_size,
+        local transparent_quads = {}
+        z_buffer, transparent_quads = self:draw_walls(z_buffer, transparent_quads, Player, Map, texture_size,
             screen_width, screen_height)
 
-        z_buffer = self:draw_sprites(z_buffer, Player, Map, Map.objs, texture_size, screen_width, screen_height)
+        z_buffer, transparent_quads = self:draw_sprites(z_buffer, transparent_quads, Player, Map, Map.objs, texture_size,
+            screen_width, screen_height)
 
         -- Sort transaprent walls by distance and then draw them after everything
-        table.sort(transparent_walls, function(a, b) return a.dist > b.dist end)
-        for _, t_wall in ipairs(transparent_walls) do
-            if t_wall.dist < z_buffer[t_wall.x] then
-                love.graphics.setColor(t_wall.shading, t_wall.shading, t_wall.shading)
-                love.graphics.draw(t_wall.wall_texture.img, t_wall.quad, t_wall.x, t_wall.draw_start, 0, 1,
-                    t_wall.scaling)
+        table.sort(transparent_quads, function(a, b) return a.dist > b.dist end)
+        for _, line in ipairs(transparent_quads) do
+            if line.dist < z_buffer[line.x] then
+                love.graphics.setColor(line.shading, line.shading, line.shading)
+                love.graphics.draw(line.texture.img, line.quad, line.x, line.draw_start, 0, 1,
+                    line.scaling)
                 love.graphics.setColor(1, 1, 1)
             end
         end

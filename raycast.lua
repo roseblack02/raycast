@@ -363,6 +363,7 @@ local Raycaster = {
         for i = 1, #SpriteObjs do
             SpriteObjs[i].distance = ((Player.x - SpriteObjs[i].x) ^ 2) + ((Player.y - SpriteObjs[i].y) ^ 2)
         end
+        table.sort(SpriteObjs, function(a, b) return a.distance > b.distance end)
         for spr = 1, #SpriteObjs do
             -- Only draw sprite if the distance is with the max view distance
             if SpriteObjs[spr].distance < Map.max_spr_dist then

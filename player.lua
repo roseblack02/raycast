@@ -1,9 +1,9 @@
 local Player = {
     x = 5,
     y = 10,
-    dir_x = 1,
+    dir_x = 0.99,
     dir_y = 0,
-    dir = 1,
+    dir = 2,
     plane_x = 0,
     plane_y = 0.66,
     move_speed = 0.05,
@@ -80,6 +80,7 @@ local Player = {
 
             self:check_direction()
         end
+
         -- Interact
         if love.keyboard.isDown(self.keybinds.interact) then
             -- Get tile data

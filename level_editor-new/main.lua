@@ -23,6 +23,10 @@ function setTile(x,y, value)
     grid[y][x] = value
 end
 
+-- mouse state for dragging
+local isMLeft = false
+local isMRight = false
+
 function love.load()
     -- level editor window
     love.window.setTitle("Level Editor")
@@ -83,6 +87,21 @@ function love.update(dt)
     if love.keyboard.isDown("down") or love.keyboard.isDown("s") then
         camY = camY + camSpeed * dt
     end
+
+    -- handle drag to draw walls or unassign tiles
+    local mouseX, mouseY = love.mouse.getPosition()
+    local gridAreaWidth = 900
+
+    if mouseX < gridAreaWidth then
+        local gridX = math.floor((mouseX + camX) / tileSize)
+        local gridY = math.floor((mouseY + camY) / tileSize)
+
+        if isMLeft then
+            setTile(gridX, gridY, selectedType)
+        elseif isMRight then
+            setTile(gridX, gridY, 0)
+        end
+    end
 end
 
 function love.mousepressed(x, y, button)
@@ -95,8 +114,18 @@ function love.mousepressed(x, y, button)
 
         if button == 1 then
             setTile(gridX, gridY, selectedType)
+            isMLeft = true
         elseif button == 2 then
             setTile(gridX, gridY, 0)  -- right click to remove wall
+            isMRight = true
         end
+    end
+end
+
+function love.mousereleased(x, y, button)
+    if button == 1 then
+        isMLeft = false
+    elseif button == 2 then
+        isMRight = false
     end
 end

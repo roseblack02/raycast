@@ -136,6 +136,7 @@ local Raycaster = {
     -----------------------------
     ---@param z_buffer table,
     ---@param transparent_quads table,
+    ---@param quads table,
     ---@param Player table,
     ---@param Map table,
     ---@param texture_size number,
@@ -143,7 +144,9 @@ local Raycaster = {
     ---@param screen_height number,
     ---@return table z_buffer
     ---@return table transparent_quads
-    draw_walls = function(self, z_buffer, transparent_quads, Player, Map, texture_size, screen_width, screen_height)
+    ---@return table quads
+    draw_walls = function(self, z_buffer, transparent_quads, quads, Player, Map, texture_size, screen_width,
+                          screen_height)
         local half_screen_height = screen_height / 2
         for x = 1, #z_buffer do
             -- Get direction
@@ -214,6 +217,7 @@ local Raycaster = {
             local wall_x
             local diagonal = false
             local wall_type = Map.walls[Map_y][Map_x][2]
+            local wall_height = Map.walls[Map_y][Map_x][5]
             local wall_texture = Map.wall_textures[Map.walls[Map_y][Map_x][1]]
 
             -- Check wall types
@@ -298,7 +302,8 @@ local Raycaster = {
             -- Drawing walls --
             -- Calculate the height of the wall slice
             local line_height = math.floor(screen_height / perp_wall_dist) + 1
-            local draw_start = (-line_height / 2 + half_screen_height)
+            local offset = wall_height * (line_height / 2)
+            local draw_start = (-line_height / 2 + half_screen_height) - offset
             local draw_end = line_height / 2 + half_screen_height
 
             -- Calculate shading based on distance
@@ -317,10 +322,9 @@ local Raycaster = {
             local quad = love.graphics.newQuad(tex_x, 0, 1, texture_size, texture_size, texture_size)
 
             z_buffer[x] = perp_wall_dist
-
             -- Check if the wall is a transparent wall
             if wall_texture.is_transparent then
-                --Store in transparent walls tbale to be drawn later
+                --Store in transparent walls table to be drawn later
                 table.insert(transparent_quads, {
                     dist = perp_wall_dist,
                     shading = shading,
@@ -330,16 +334,23 @@ local Raycaster = {
                     draw_start = draw_start,
                     scaling = scaling
                 })
-                -- restart raycasting
+                -- Restart raycasting
                 view_dist = 0
                 goto rayscan
-            else -- Just draw if not
-                love.graphics.setColor(shading, shading, shading)
-                love.graphics.draw(wall_texture.img, quad, x, draw_start, 0, 1, scaling)
-                love.graphics.setColor(1, 1, 1)
+            else
+                --Store in quads for solid walls
+                table.insert(quads, {
+                    dist = perp_wall_dist,
+                    shading = shading,
+                    texture = wall_texture,
+                    quad = quad,
+                    x = x,
+                    draw_start = draw_start,
+                    scaling = scaling
+                })
             end
         end
-        return z_buffer, transparent_quads
+        return z_buffer, transparent_quads, quads
     end,
 
     -- Draw the sprites found in the sprite objects table
@@ -450,17 +461,29 @@ local Raycaster = {
         local final_frame = love.graphics.newImage(pixel_buffer)
         love.graphics.draw(final_frame)
 
+        local quads = {}
         local transparent_quads = {}
-        z_buffer, transparent_quads = self:draw_walls(z_buffer, transparent_quads, Player, Map, texture_size,
+        z_buffer, transparent_quads, quads = self:draw_walls(z_buffer, transparent_quads, quads, Player, Map,
+            texture_size,
             screen_width, screen_height)
 
         z_buffer, transparent_quads = self:draw_sprites(z_buffer, transparent_quads, Player, Map, Map.objs, texture_size,
             screen_width, screen_height)
 
-        -- Sort transaprent walls by distance and then draw them after everything
-        table.sort(transparent_quads, function(a, b) return a.dist > b.dist end)
-        for _, line in ipairs(transparent_quads) do
-            if line.dist < z_buffer[line.x] then
+        -- Draw solid texture walls
+        self:draw_quads(quads, z_buffer)
+        -- Draw transparent quads and sprites
+        self:draw_quads(transparent_quads, z_buffer)
+    end,
+    -- Sort a table of quads and then draw them to the screen (used for wals and sprites)
+    -----------------------------
+    ---@param tbl table,
+    ---@param z_buffer table,
+    draw_quads = function(self, tbl, z_buffer)
+        -- Sort quads in reverse order
+        table.sort(tbl, function(a, b) return a.dist > b.dist end)
+        for _, line in ipairs(tbl) do
+            if line.dist <= z_buffer[line.x] then
                 love.graphics.setColor(line.shading, line.shading, line.shading)
                 love.graphics.draw(line.texture.img, line.quad, line.x, line.draw_start, 0, 1,
                     line.scaling)

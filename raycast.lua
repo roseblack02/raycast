@@ -302,7 +302,7 @@ local Raycaster = {
             -- Drawing walls --
             -- Calculate the height of the wall slice
             local line_height = math.floor(screen_height / perp_wall_dist) + 1
-            local offset = wall_height * (line_height / 2)
+            local offset = wall_height * line_height
             local draw_start = (-line_height / 2 + half_screen_height) - offset
             local draw_end = line_height / 2 + half_screen_height
 

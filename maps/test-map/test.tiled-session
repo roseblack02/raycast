@@ -1,0 +1,63 @@
+{
+    "activeFile": "test-map.xml",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "collision-set.xml": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "flag-set.xml": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "floor-ceiling-set.xml": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "test-map.xml": {
+            "scale": 0.5609700520833333,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 767.4206464341671,
+                "y": 767.4206464341671
+            }
+        },
+        "type-set.xml": {
+            "scaleInDock": 0.75,
+            "scaleInEditor": 1
+        },
+        "wall-set.xml": {
+            "scaleInDock": 0.5,
+            "scaleInEditor": 1
+        }
+    },
+    "last.exportedFilePath": "/home/rose/Desktop/love/raycast/maps/test-map",
+    "last.imagePath": "/home/rose/Desktop/love/raycast/textures/tileset-textures/test-map/floors",
+    "map.lastUsedExportFilter": "All Files (*)",
+    "openFiles": [
+        "test-map.xml",
+        "floor-ceiling-set.xml",
+        "wall-set.xml",
+        "collision-set.xml",
+        "flag-set.xml",
+        "type-set.xml"
+    ],
+    "project": "test.tiled-project",
+    "property.type": "string",
+    "recentFiles": [
+        "type-set.xml",
+        "flag-set.xml",
+        "collision-set.xml",
+        "wall-set.xml",
+        "floor-ceiling-set.xml",
+        "test-map.xml"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 64,
+        "width": 64
+    },
+    "tileset.useTransparentColor": true
+}

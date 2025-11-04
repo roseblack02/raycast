@@ -24,35 +24,35 @@ local Player = {
     update = function(self, Map)
         -- Forwards and back
         if love.keyboard.isDown(self.keybinds.fward) then
-            if not Map.walls[math.floor(self.y)][math.floor(self.x + self.dir_x * self.move_speed)][3] then
+            if not Map.layers.collisions[math.floor(self.y)][math.floor(self.x + self.dir_x * self.move_speed)] then
                 self.x = self.x + self.dir_x * self.move_speed
             end
-            if not Map.walls[math.floor(self.y + self.dir_y * self.move_speed)][math.floor(self.x)][3] then
+            if not Map.layers.collisions[math.floor(self.y + self.dir_y * self.move_speed)][math.floor(self.x)] then
                 self.y = self.y + self.dir_y * self.move_speed
             end
         end
         if love.keyboard.isDown(self.keybinds.bward) then
-            if not Map.walls[math.floor(self.y)][math.floor(self.x - self.dir_x * self.move_speed)][3] then
+            if not Map.layers.collisions[math.floor(self.y)][math.floor(self.x - self.dir_x * self.move_speed)] then
                 self.x = self.x - self.dir_x * self.move_speed
             end
-            if not Map.walls[math.floor(self.y - self.dir_y * self.move_speed)][math.floor(self.x)][3] then
+            if not Map.layers.collisions[math.floor(self.y - self.dir_y * self.move_speed)][math.floor(self.x)] then
                 self.y = self.y - self.dir_y * self.move_speed
             end
         end
         -- Left and right
         if love.keyboard.isDown(self.keybinds.strafe_l) then
-            if not Map.walls[math.floor(self.y)][math.floor(self.x - self.plane_x * self.move_speed)][3] then
+            if not Map.layers.collisions[math.floor(self.y)][math.floor(self.x - self.plane_x * self.move_speed)] then
                 self.x = self.x - self.plane_x * (self.move_speed / 2)
             end
-            if not Map.walls[math.floor(self.y - self.plane_y * self.move_speed)][math.floor(self.x)][3] then
+            if not Map.layers.collisions[math.floor(self.y - self.plane_y * self.move_speed)][math.floor(self.x)] then
                 self.y = self.y - self.plane_y * (self.move_speed / 2)
             end
         end
         if love.keyboard.isDown(self.keybinds.strafe_r) then
-            if not Map.walls[math.floor(self.y)][math.floor(self.x + self.plane_x * self.move_speed)][3] then
+            if not Map.layers.collisions[math.floor(self.y)][math.floor(self.x + self.plane_x * self.move_speed)] then
                 self.x = self.x + self.plane_x * (self.move_speed / 2)
             end
-            if not Map.walls[math.floor(self.y + self.plane_y * self.move_speed)][math.floor(self.x)][3] then
+            if not Map.layers.collisions[math.floor(self.y + self.plane_y * self.move_speed)][math.floor(self.x)] then
                 self.y = self.y + self.plane_y * (self.move_speed / 2)
             end
         end
@@ -84,13 +84,12 @@ local Player = {
         -- Interact
         if love.keyboard.isDown(self.keybinds.interact) then
             -- Get tile data
-            local tile, x, y = self:check_tile(Map)
+            local flag, x, y = self:check_tile(Map)
 
             -- Check for an event flag
-            local flag = tile[4]
             if flag > 0 then
                 -- Grab event using the flag and call it
-                local fn = Map.events[tile[4]]
+                local fn = Map.events[flag]
                 fn(Map, self, x, y)
             end
         end
@@ -100,7 +99,7 @@ local Player = {
     ---@param Map table
     check_tile = function(self, Map)
         local y, x = math.floor(self.y + self.dir_y * self.move_speed), math.floor(self.x + self.dir_x * self.move_speed)
-        local tile = Map.walls[y][x]
+        local tile = Map.layers.flags[y][x]
         return tile, x, y
     end,
     -- Function for checking the players direction 1 is north, 2 is east, 3 is south, 4 is west

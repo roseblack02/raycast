@@ -1,6 +1,6 @@
 local Player = require("player")
-local Raycaster = require("raycast")
-local Map = require("map")
+local Raycaster = require("raycast-tiled")
+local Map = require("map-tiled")
 local Objects = require("objects")
 local Tick = require("tick")
 local Push = require("push")
@@ -11,7 +11,10 @@ local window_width, window_height = 800, 600 --love.window.getDesktopDimensions(
 Push:setupScreen(screen_width, screen_height, window_width, window_height, { fullscreen = false })
 
 function love.load()
+    Map:init_map('/maps/test-map/','test-map')
     Map:load_objs(Objects)
+    Player.x=3
+    Player.y=3
 end
 
 function love.update(dt)

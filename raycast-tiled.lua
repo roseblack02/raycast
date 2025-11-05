@@ -50,8 +50,10 @@ local Raycaster = {
         local skybox_x = -((degrees / 360) * scaled_width)
 
         for i = 0, 2 do
+            love.graphics.setColor(Map.fog_colour[1], Map.fog_colour[2], Map.fog_colour[3])
             love.graphics.draw(skybox_tex.img, skybox_x + (scaled_width * i), 0,
                 0, scale, scale)
+            love.graphics.setColor(1, 1, 1)
         end
     end,
 
@@ -99,13 +101,16 @@ local Raycaster = {
                         ty = math.max(0, math.min(ty, texture_size - 1))
 
                         -- Calculate shading based on distance
-                        local shading = 1 - (row_dist / (Map.max_view_dist / 1.5))
+                        local shading = {}
+                        for i=1,#Map.fog_colour do
+                            table.insert(shading,Map.fog_colour[i]- (row_dist / (Map.max_view_dist / 1.5)))
+                        end
 
                         if y > 0 and y < screen_height then
                             -- Floor
                             if floor_tex > 0 then
                                 local r, g, b, a = Map.floor_textures[floor_tex].img:getPixel(tx, ty)
-                                r, g, b = r * shading, g * shading, b * shading
+                                r, g, b = r * shading[1], g * shading[2], b * shading[3]
 
                                 if a == 1 then
                                     pixel_buffer:setPixel(x, y, r, g, b)
@@ -115,7 +120,7 @@ local Raycaster = {
                             -- Ceiling
                             if ceiling_tex > 0 then
                                 local r, g, b, a = Map.floor_textures[ceiling_tex].img:getPixel(tx, ty)
-                                r, g, b = r * shading, g * shading, b * shading
+                                r, g, b = r * shading[1], g * shading[2], b * shading[3]
                                 if a == 1 then
                                     pixel_buffer:setPixel(x, screen_height - y - 1, r, g, b)
                                 end
@@ -302,7 +307,10 @@ local Raycaster = {
             local draw_end = line_height / 2 + half_screen_height
 
             -- Calculate shading based on distance
-            local shading = 1 - (perp_wall_dist / (Map.max_view_dist / 1.5))
+            local shading = {}
+            for i=1,#Map.fog_colour do
+                table.insert(shading,Map.fog_colour[i]- (perp_wall_dist / (Map.max_view_dist / 1.5)))
+            end
 
             -- Calculate wall texture coordinates based on side
             local tex_x = math.floor(wall_x * texture_size)
@@ -334,7 +342,7 @@ local Raycaster = {
                 view_dist = 0
                 goto rayscan
             else -- Just draw if not
-                love.graphics.setColor(shading, shading, shading)
+                love.graphics.setColor(shading[1], shading[2], shading[3])
                 love.graphics.draw(wall_texture.img, quad, x, draw_start, 0, 1, scaling)
                 love.graphics.setColor(1, 1, 1)
             end
@@ -390,7 +398,10 @@ local Raycaster = {
                 local draw_end_x = math.floor(sprite_width / 2 + sprite_screen_x)
 
                 -- Calculate shading based on distance
-                local shading = 1 - (transform_y / (Map.max_view_dist / 1.5))
+                local shading = {}
+                for i=1,#Map.fog_colour do
+                    table.insert(shading,Map.fog_colour[i]- (transform_y / (Map.max_view_dist / 1.5)))
+                end
                 local tex_num = 1
                 if SpriteObjs[spr].is_directional then
                     -- If the sprite is directional then you need to use the player direction to get the texture
@@ -461,7 +472,7 @@ local Raycaster = {
         table.sort(transparent_quads, function(a, b) return a.dist > b.dist end)
         for _, line in ipairs(transparent_quads) do
             if line.dist < z_buffer[line.x] then
-                love.graphics.setColor(line.shading, line.shading, line.shading)
+                love.graphics.setColor(line.shading[1], line.shading[2], line.shading[3])
                 love.graphics.draw(line.texture.img, line.quad, line.x, line.draw_start, 0, 1,
                     line.scaling)
                 love.graphics.setColor(1, 1, 1)

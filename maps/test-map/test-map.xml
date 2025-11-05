@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="24" height="24" tilewidth="64" tileheight="64" infinite="0" nextlayerid="9" nextobjectid="15">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="24" height="24" tilewidth="64" tileheight="64" infinite="0" nextlayerid="9" nextobjectid="27">
  <editorsettings>
   <export target="test-map.lua" format="lua"/>
  </editorsettings>
  <properties>
   <property name="floor-tex-dir" value="/textures/tileset-textures/test-map/floors/"/>
+  <property name="fog" type="color" value="#ffc0dcdf"/>
   <property name="skybox" type="bool" value="true"/>
   <property name="skybox-height" type="int" value="128"/>
-  <property name="skybox-tex" type="file" value="../../textures/skybox/sky_night_01.png"/>
+  <property name="skybox-tex" value="/textures/skybox/sky_night_01.png"/>
   <property name="skybox-width" type="int" value="512"/>
+  <property name="spr-dist" type="int" value="24"/>
+  <property name="sprites-tex-dir" value="textures/tileset-textures/sprites/"/>
+  <property name="view-dist" type="int" value="24"/>
   <property name="wall-tex-dir" value="/textures/tileset-textures/test-map/walls/"/>
  </properties>
  <tileset firstgid="1" source="floor-ceiling-set.xml"/>
@@ -104,22 +108,22 @@
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,262,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,260,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,261,261,261,261,261,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,262,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,260,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,261,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,261,0,0,0,258,0,0,0,0,0,0,257,0,0,0,0,0,
+0,259,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,258,0,0,0,0,0,0,257,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,261,0,0,0,0,0,0,261,261,261,261,261,261,261,261,261,261,261,261,261,0,
+0,0,0,259,0,0,0,0,0,0,261,261,261,261,261,261,261,261,261,261,261,261,261,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,262,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,262,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -185,28 +189,112 @@
 </data>
  </layer>
  <objectgroup id="8" name="objects">
-  <object id="5" x="254.916" y="861.009">
+  <object id="15" name="barrel" x="456.352" y="335.134">
+   <properties>
+    <property name="is-directional" type="bool" value="false"/>
+    <property name="texture-id" type="int" value="1"/>
+    <property name="x-scale" type="float" value="1"/>
+    <property name="y-scale" type="float" value="1"/>
+   </properties>
    <point/>
   </object>
-  <object id="6" x="320.873" y="861.009">
+  <object id="16" name="barrel" x="181.828" y="880.617">
+   <properties>
+    <property name="is-directional" type="bool" value="false"/>
+    <property name="texture-id" type="int" value="1"/>
+    <property name="x-scale" type="float" value="1"/>
+    <property name="y-scale" type="float" value="1"/>
+   </properties>
    <point/>
   </object>
-  <object id="7" x="830.704" y="823.573">
+  <object id="17" name="barrel" x="861.009" y="381.482">
+   <properties>
+    <property name="is-directional" type="bool" value="false"/>
+    <property name="texture-id" type="int" value="1"/>
+    <property name="x-scale" type="float" value="1"/>
+    <property name="y-scale" type="float" value="1"/>
+   </properties>
    <point/>
   </object>
-  <object id="10" x="1146.23" y="821.791">
+  <object id="18" name="barrel" x="859.226" y="447.439">
+   <properties>
+    <property name="is-directional" type="bool" value="false"/>
+    <property name="texture-id" type="int" value="1"/>
+    <property name="x-scale" type="float" value="1"/>
+    <property name="y-scale" type="float" value="1"/>
+   </properties>
    <point/>
   </object>
-  <object id="11" x="698.79" y="1212.19">
+  <object id="19" name="barrel" x="718.398" y="1242.49">
+   <properties>
+    <property name="is-directional" type="bool" value="false"/>
+    <property name="texture-id" type="int" value="1"/>
+    <property name="x-scale" type="float" value="1"/>
+    <property name="y-scale" type="float" value="1"/>
+   </properties>
    <point/>
   </object>
-  <object id="12" x="773.66" y="1212.19">
+  <object id="20" name="barrel" x="739.79" y="1340.54">
+   <properties>
+    <property name="is-directional" type="bool" value="false"/>
+    <property name="texture-id" type="int" value="1"/>
+    <property name="x-scale" type="float" value="1"/>
+    <property name="y-scale" type="float" value="1"/>
+   </properties>
    <point/>
   </object>
-  <object id="13" x="697.007" y="1292.4">
+  <object id="21" name="barrel" x="768.312" y="1265.66">
+   <properties>
+    <property name="is-directional" type="bool" value="false"/>
+    <property name="texture-id" type="int" value="1"/>
+    <property name="x-scale" type="float" value="1"/>
+    <property name="y-scale" type="float" value="1"/>
+   </properties>
    <point/>
   </object>
-  <object id="14" x="465.7" y="361.612">
+  <object id="22" name="barrel" x="1342.32" y="1230.01">
+   <properties>
+    <property name="is-directional" type="bool" value="false"/>
+    <property name="texture-id" type="int" value="1"/>
+    <property name="x-scale" type="float" value="1"/>
+    <property name="y-scale" type="float" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="23" name="lamp" x="855.661" y="864.574">
+   <properties>
+    <property name="is-directional" type="bool" value="false"/>
+    <property name="texture-id" type="int" value="2"/>
+    <property name="x-scale" type="float" value="1"/>
+    <property name="y-scale" type="float" value="2"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="24" name="lamp" x="1144.45" y="866.356">
+   <properties>
+    <property name="is-directional" type="bool" value="false"/>
+    <property name="texture-id" type="int" value="2"/>
+    <property name="x-scale" type="float" value="1"/>
+    <property name="y-scale" type="float" value="2"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="25" name="lamp" x="855.661" y="513.396">
+   <properties>
+    <property name="is-directional" type="bool" value="false"/>
+    <property name="texture-id" type="int" value="2"/>
+    <property name="x-scale" type="float" value="1"/>
+    <property name="y-scale" type="float" value="2"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="26" name="lamp" x="240.655" y="878.835">
+   <properties>
+    <property name="is-directional" type="bool" value="false"/>
+    <property name="texture-id" type="int" value="2"/>
+    <property name="x-scale" type="float" value="1"/>
+    <property name="y-scale" type="float" value="2"/>
+   </properties>
    <point/>
   </object>
  </objectgroup>

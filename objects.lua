@@ -1,4 +1,4 @@
-local objects = {
+local object = {
     -- Creates an object then inserts it into the table passed in
     -----------------------------
     ---@param name string,
@@ -37,4 +37,4 @@ local objects = {
     end
 }
 
-return objects
+return object

@@ -10,13 +10,17 @@ return {
   tilewidth = 64,
   tileheight = 64,
   nextlayerid = 9,
-  nextobjectid = 15,
+  nextobjectid = 27,
   properties = {
     ["floor-tex-dir"] = "/textures/tileset-textures/test-map/floors/",
+    ["fog"] = "#ffc0dcdf",
     ["skybox"] = true,
     ["skybox-height"] = 128,
-    ["skybox-tex"] = "../../textures/skybox/sky_night_01.png",
+    ["skybox-tex"] = "/textures/skybox/sky_night_01.png",
     ["skybox-width"] = 512,
+    ["spr-dist"] = 24,
+    ["sprites-tex-dir"] = "textures/tileset-textures/sprites/",
+    ["view-dist"] = 24,
     ["wall-tex-dir"] = "/textures/tileset-textures/test-map/walls/"
   },
   tilesets = {
@@ -199,22 +203,22 @@ return {
       data = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 262, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 260, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 261, 261, 261, 261, 261, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 262, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 260, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 261, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 261, 0, 0, 0, 258, 0, 0, 0, 0, 0, 0, 257, 0, 0, 0, 0, 0,
+        0, 259, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 258, 0, 0, 0, 0, 0, 0, 257, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 261, 0, 0, 0, 0, 0, 0, 261, 261, 261, 261, 261, 261, 261, 261, 261, 261, 261, 261, 261, 0,
+        0, 0, 0, 259, 0, 0, 0, 0, 0, 0, 261, 261, 261, 261, 261, 261, 261, 261, 261, 261, 261, 261, 261, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 262, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 262, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -326,108 +330,220 @@ return {
       properties = {},
       objects = {
         {
-          id = 5,
-          name = "",
+          id = 15,
+          name = "barrel",
           type = "",
           shape = "point",
-          x = 254.916,
-          y = 861.009,
+          x = 456.352,
+          y = 335.134,
           width = 0,
           height = 0,
           rotation = 0,
           visible = true,
-          properties = {}
+          properties = {
+            ["is-directional"] = false,
+            ["texture-id"] = 1,
+            ["x-scale"] = 1,
+            ["y-scale"] = 1
+          }
         },
         {
-          id = 6,
-          name = "",
+          id = 16,
+          name = "barrel",
           type = "",
           shape = "point",
-          x = 320.873,
-          y = 861.009,
+          x = 181.828,
+          y = 880.617,
           width = 0,
           height = 0,
           rotation = 0,
           visible = true,
-          properties = {}
+          properties = {
+            ["is-directional"] = false,
+            ["texture-id"] = 1,
+            ["x-scale"] = 1,
+            ["y-scale"] = 1
+          }
         },
         {
-          id = 7,
-          name = "",
+          id = 17,
+          name = "barrel",
           type = "",
           shape = "point",
-          x = 830.704,
-          y = 823.573,
+          x = 861.009,
+          y = 381.482,
           width = 0,
           height = 0,
           rotation = 0,
           visible = true,
-          properties = {}
+          properties = {
+            ["is-directional"] = false,
+            ["texture-id"] = 1,
+            ["x-scale"] = 1,
+            ["y-scale"] = 1
+          }
         },
         {
-          id = 10,
-          name = "",
+          id = 18,
+          name = "barrel",
           type = "",
           shape = "point",
-          x = 1146.23,
-          y = 821.791,
+          x = 859.226,
+          y = 447.439,
           width = 0,
           height = 0,
           rotation = 0,
           visible = true,
-          properties = {}
+          properties = {
+            ["is-directional"] = false,
+            ["texture-id"] = 1,
+            ["x-scale"] = 1,
+            ["y-scale"] = 1
+          }
         },
         {
-          id = 11,
-          name = "",
+          id = 19,
+          name = "barrel",
           type = "",
           shape = "point",
-          x = 698.79,
-          y = 1212.19,
+          x = 718.398,
+          y = 1242.49,
           width = 0,
           height = 0,
           rotation = 0,
           visible = true,
-          properties = {}
+          properties = {
+            ["is-directional"] = false,
+            ["texture-id"] = 1,
+            ["x-scale"] = 1,
+            ["y-scale"] = 1
+          }
         },
         {
-          id = 12,
-          name = "",
+          id = 20,
+          name = "barrel",
           type = "",
           shape = "point",
-          x = 773.66,
-          y = 1212.19,
+          x = 739.79,
+          y = 1340.54,
           width = 0,
           height = 0,
           rotation = 0,
           visible = true,
-          properties = {}
+          properties = {
+            ["is-directional"] = false,
+            ["texture-id"] = 1,
+            ["x-scale"] = 1,
+            ["y-scale"] = 1
+          }
         },
         {
-          id = 13,
-          name = "",
+          id = 21,
+          name = "barrel",
           type = "",
           shape = "point",
-          x = 697.007,
-          y = 1292.4,
+          x = 768.312,
+          y = 1265.66,
           width = 0,
           height = 0,
           rotation = 0,
           visible = true,
-          properties = {}
+          properties = {
+            ["is-directional"] = false,
+            ["texture-id"] = 1,
+            ["x-scale"] = 1,
+            ["y-scale"] = 1
+          }
         },
         {
-          id = 14,
-          name = "",
+          id = 22,
+          name = "barrel",
           type = "",
           shape = "point",
-          x = 465.7,
-          y = 361.612,
+          x = 1342.32,
+          y = 1230.01,
           width = 0,
           height = 0,
           rotation = 0,
           visible = true,
-          properties = {}
+          properties = {
+            ["is-directional"] = false,
+            ["texture-id"] = 1,
+            ["x-scale"] = 1,
+            ["y-scale"] = 1
+          }
+        },
+        {
+          id = 23,
+          name = "lamp",
+          type = "",
+          shape = "point",
+          x = 855.661,
+          y = 864.574,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["is-directional"] = false,
+            ["texture-id"] = 2,
+            ["x-scale"] = 1,
+            ["y-scale"] = 2
+          }
+        },
+        {
+          id = 24,
+          name = "lamp",
+          type = "",
+          shape = "point",
+          x = 1144.45,
+          y = 866.356,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["is-directional"] = false,
+            ["texture-id"] = 2,
+            ["x-scale"] = 1,
+            ["y-scale"] = 2
+          }
+        },
+        {
+          id = 25,
+          name = "lamp",
+          type = "",
+          shape = "point",
+          x = 855.661,
+          y = 513.396,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["is-directional"] = false,
+            ["texture-id"] = 2,
+            ["x-scale"] = 1,
+            ["y-scale"] = 2
+          }
+        },
+        {
+          id = 26,
+          name = "lamp",
+          type = "",
+          shape = "point",
+          x = 240.655,
+          y = 878.835,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["is-directional"] = false,
+            ["texture-id"] = 2,
+            ["x-scale"] = 1,
+            ["y-scale"] = 2
+          }
         }
       }
     }

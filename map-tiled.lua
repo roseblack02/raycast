@@ -2,7 +2,7 @@ local Map={
     width = 0, height = 0,
     tile_width = 0, tile_height = 0,
     max_view_dist = 8, max_spr_dist = 20,
-    fog_colour = { 0.8, 0.5, 0.7 },
+    fog_colour = { 0.9025, 0.9025, 1 },
     -- Tile values are split across difference layers as that is how they are exported in Tiled
     layers={
         floors={},
@@ -22,12 +22,7 @@ local Map={
     },
     -- Sprite textures need to be loaded in using graphics to use quads
     sprite_textures = {
-        { img = love.graphics.newImage("/textures/sprites/sprite_barrel_01.png"), size = 128 },
-        { img = love.graphics.newImage("/textures/sprites/sprite_lamp_01.png"),   size = 128 },
-        { img = love.graphics.newImage("/textures/sprites/sprite_box_01.png"),    size = 128 },
-        { img = love.graphics.newImage("/textures/sprites/sprite_box_02.png"),    size = 128 },
-        { img = love.graphics.newImage("/textures/sprites/sprite_box_03.png"),    size = 128 },
-        { img = love.graphics.newImage("/textures/sprites/sprite_box_04.png"),    size = 128 },
+        --{ img = love.graphics.newImage("path"), size = int },
     },
     skybox = true,
     skybox_texture = {
@@ -59,12 +54,28 @@ local Map={
         self.height=map_file.height
         self.tile_width=map_file.tilewidth 
         self.tile_height=map_file.tileheight
+        self.max_view_dist=map_file.properties["view-dist"]
+        self.max_spr_dist=map_file.properties["spr-dist"]
+
+        -- Tiled stores this is hexidecimal so needs to be converted to {r,g,b}
+        local hex_fog = map_file.properties["fog"]
+        hex_fog = string.sub(hex_fog,4)
+        self.fog_colour= {
+            tonumber(string.sub(hex_fog, 1, 2), 16)/255,
+            tonumber(string.sub(hex_fog, 3, 4), 16)/255,
+            tonumber(string.sub(hex_fog, 5, 6), 16)/255
+        }  
+        print(hex_fog)
+        print(self.fog_colour[1])
+        print(self.fog_colour[2])
+        print(self.fog_colour[3])
 
         -- Load in textures
         self:load_textures(map_file.properties)
 
+        -- -1 to exclude objects for now
         -- Extracting the data from the Tiled map layers and putting in correct format
-        for i=1, #map_file.layers do
+        for i=1, #map_file.layers-1 do
             local layer_name = map_file.layers[i].name
             local tiled_data = map_file.layers[i].data
 
@@ -109,7 +120,7 @@ local Map={
             elseif layer_name == 'flag' then
                 self.layers.flags = data
             elseif layer_name == 'collision' then
-                -- For collision, we store booleans, not numbers
+                -- Collsion uses booleans
                 local collision_data = {}
                 for y = 1, self.height do
                     local row = {}
@@ -122,6 +133,8 @@ local Map={
                 self.layers.collisions = collision_data
             end
         end
+
+        self.map_objs=map_file.layers[#map_file.layers].objects
     end,
     -- Load in textures from the maps properties
     -----------------------------
@@ -131,6 +144,7 @@ local Map={
         -- Custom properties are set in Tiled to point in corect directory
         local walls=love.filesystem.getDirectoryItems(props["wall-tex-dir"])
         local floors=love.filesystem.getDirectoryItems(props["floor-tex-dir"])
+        local sprites=love.filesystem.getDirectoryItems(props["sprites-tex-dir"])
 
         -- Loop through directory and load image files in correct order
         for i=2, #walls do
@@ -153,6 +167,15 @@ local Map={
             table.insert(self.floor_textures,tex)
         end
 
+        -- Sprite textures
+        for i=1, #sprites do
+            local tex={
+                img=love.graphics.newImage(props["sprites-tex-dir"].. sprites[i]),
+                size=self.tile_width,
+            }
+            table.insert(self.sprite_textures,tex)
+        end
+
         -- Skybox data
         self.skybox = props["skybox"]
         self.skybox_texture = {
@@ -164,21 +187,25 @@ local Map={
 
     -- Store objects
     objs = {},
+    map_objs={},
     -- Load in game objects
     -----------------------------
     ---@param Objects table
     load_objs = function(self, Objects)
-        -- name, y, x, textures table, x scaling factor, y scaling factor,is_directional, table of extra properties
-        table.insert(self.objs, Objects:create_obj("barrel", 2.5, 3.1, { 1 }, 0.5, 0.25, false, {}))
-        table.insert(self.objs, Objects:create_obj("barrel", 2.7, 4.5, { 1 }, 0.75, 0.5, false, {}))
-        table.insert(self.objs, Objects:create_obj("barrel", 2.5, 5, { 1 }, 0.5, 0.25, false, {}))
-        table.insert(self.objs, Objects:create_obj("barrel", 12, 15.5, { 1 }, 0.5, 0.25, false, {}))
-        --table.insert(self.objs, Objects:create_obj("lamp_post", 8, 8.5, { 2 }, 1, 2, false, {}))
-        --table.insert(self.objs, Objects:create_obj("lamp_post", 11.5, 6, { 2 }, 1, 2, false, {}))
-        --table.insert(self.objs, Objects:create_obj("box", 5, 5, { 3, 4, 5, 6 }, 0.25, -0.25, true, {}))
-
         -- Tiled sets coords as pixels and not in grid cells so need to divide by tile size
-        
+        for _, obj in ipairs(self.map_objs) do
+            -- name, y, x, textures table, x scaling factor, y scaling factor,is_directional, table of extra properties
+            table.insert(self.objs,Objects:create_obj(
+                obj.name,
+                obj.y/(self.tile_height-1),
+                obj.x/(self.tile_width-1),
+                {obj.properties["texture-id"]}, -- table in case the sprite is directional
+                obj.properties["x-scale"],
+                obj.properties["y-scale"],
+                obj.properties["is-directional"],
+                {} -- optional properties
+            ))
+        end
     end,
     -- Unload all objects when map is changed
     -----------------------------
